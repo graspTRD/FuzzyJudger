@@ -1,0 +1,7 @@
+[Dd]ebug*/
+ipch*/
+GeneratedFiles*/
+*.ilk
+*.pdb
+*.opensdf
+*.sdf
