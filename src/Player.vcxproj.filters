@@ -1,0 +1,220 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project ToolsVersion="4.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <ItemGroup>
+    <Filter Include="Source Files">
+      <UniqueIdentifier>{4FC737F1-C7A5-4376-A066-2A32D752A2FF}</UniqueIdentifier>
+      <Extensions>cpp;cxx;c;def</Extensions>
+    </Filter>
+    <Filter Include="Header Files">
+      <UniqueIdentifier>{93995380-89BD-4b04-88EB-625FBE52EBFB}</UniqueIdentifier>
+      <Extensions>h</Extensions>
+    </Filter>
+    <Filter Include="Resource Files">
+      <UniqueIdentifier>{D9D6E242-F8AF-46E4-B9FD-80ECBC20BA3E}</UniqueIdentifier>
+      <Extensions>qrc;*</Extensions>
+      <ParseFiles>false</ParseFiles>
+    </Filter>
+    <Filter Include="Generated Files">
+      <UniqueIdentifier>{71ED8ED8-ACB9-4CE9-BBE1-E00B30144E11}</UniqueIdentifier>
+      <Extensions>moc;h;cpp</Extensions>
+      <SourceControlFiles>False</SourceControlFiles>
+    </Filter>
+    <Filter Include="Generated Files\Debug">
+      <UniqueIdentifier>{53f0d689-f564-4060-a16f-5315ce61ac5f}</UniqueIdentifier>
+      <Extensions>cpp;moc</Extensions>
+      <SourceControlFiles>False</SourceControlFiles>
+    </Filter>
+    <Filter Include="Generated Files\Release">
+      <UniqueIdentifier>{e0ac2e74-4b45-4aa6-a65d-3545110c7e02}</UniqueIdentifier>
+      <Extensions>cpp;moc</Extensions>
+      <SourceControlFiles>False</SourceControlFiles>
+    </Filter>
+  </ItemGroup>
+  <ItemGroup>
+    <ClCompile Include="main.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="GeneratedFiles\qrc_player.cpp">
+      <Filter>Generated Files</Filter>
+    </ClCompile>
+    <ClCompile Include="stdafx.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="GeneratedFiles\Debug\moc_widgetrect.cpp">
+      <Filter>Generated Files\Debug</Filter>
+    </ClCompile>
+    <ClCompile Include="GeneratedFiles\Release\moc_widgetrect.cpp">
+      <Filter>Generated Files\Release</Filter>
+    </ClCompile>
+    <ClCompile Include="common\widgetrect.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="code\pichandle.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="GeneratedFiles\Debug\moc_pichandle.cpp">
+      <Filter>Generated Files\Debug</Filter>
+    </ClCompile>
+    <ClCompile Include="GeneratedFiles\Release\moc_pichandle.cpp">
+      <Filter>Generated Files\Release</Filter>
+    </ClCompile>
+    <ClCompile Include="jhead\exif.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="jhead\gpsinfo.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="jhead\iptc.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="jhead\jhead.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="jhead\jpgfile.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="jhead\jpghead.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="GeneratedFiles\Debug\moc_jpghead.cpp">
+      <Filter>Generated Files\Debug</Filter>
+    </ClCompile>
+    <ClCompile Include="GeneratedFiles\Release\moc_jpghead.cpp">
+      <Filter>Generated Files\Release</Filter>
+    </ClCompile>
+    <ClCompile Include="jhead\makernote.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="jhead\myglob.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="jhead\paths.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="common\fileutils.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="common\errorutils.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="GeneratedFiles\Debug\moc_errorutils.cpp">
+      <Filter>Generated Files\Debug</Filter>
+    </ClCompile>
+    <ClCompile Include="GeneratedFiles\Release\moc_errorutils.cpp">
+      <Filter>Generated Files\Release</Filter>
+    </ClCompile>
+    <ClCompile Include="code\blurjudger.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+  </ItemGroup>
+  <ItemGroup>
+    <CustomBuild Include="Resources\player.qrc">
+      <Filter>Resource Files</Filter>
+    </CustomBuild>
+    <CustomBuild Include="common\widgetrect.h">
+      <Filter>Header Files</Filter>
+    </CustomBuild>
+    <CustomBuild Include="code\pichandle.h">
+      <Filter>Header Files</Filter>
+    </CustomBuild>
+    <CustomBuild Include="jhead\jpghead.h">
+      <Filter>Header Files</Filter>
+    </CustomBuild>
+    <CustomBuild Include="common\errorutils.h">
+      <Filter>Header Files</Filter>
+    </CustomBuild>
+  </ItemGroup>
+  <ItemGroup>
+    <ClInclude Include="stdafx.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="resource.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="jhead\jhead.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="common\fileutils.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="code\blurjudger.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\skin.qss" />
+    <None Include="Resources\mainframe.png" />
+    <None Include="Resources\playerwnd.png" />
+    <None Include="Resources\pause1.png" />
+    <None Include="Resources\pause3.png" />
+    <None Include="Resources\pause2.png" />
+    <None Include="Resources\continue3.png" />
+    <None Include="Resources\continue.png" />
+    <None Include="Resources\continue2.png" />
+    <None Include="Resources\sysmaxbutton.qss" />
+    <None Include="Resources\syspanel\closeh.png" />
+    <None Include="Resources\syspanel\normalp.png" />
+    <None Include="Resources\syspanel\closen.png" />
+    <None Include="Resources\syspanel\closep.png" />
+    <None Include="Resources\syspanel\maxh.png" />
+    <None Include="Resources\syspanel\maxn.png" />
+    <None Include="Resources\syspanel\maxp.png" />
+    <None Include="Resources\syspanel\minh.png" />
+    <None Include="Resources\syspanel\minn.png" />
+    <None Include="Resources\syspanel\minp.png" />
+    <None Include="Resources\syspanel\normalh.png" />
+    <None Include="Resources\syspanel\normaln.png" />
+    <None Include="Resources\translider\tran.png" />
+    <None Include="Resources\open3.png" />
+    <None Include="Resources\open1.png" />
+    <None Include="Resources\open2.png" />
+    <None Include="Resources\stop3.png" />
+    <None Include="Resources\stop1.png" />
+    <None Include="Resources\stop2.png" />
+    <None Include="Resources\left3.png" />
+    <None Include="Resources\left1.png" />
+    <None Include="Resources\left2.png" />
+    <None Include="Resources\right3.png" />
+    <None Include="Resources\right1.png" />
+    <None Include="Resources\right2.png" />
+    <None Include="Resources\player.png" />
+    <None Include="Resources\aa.png" />
+    <None Include="Resources\prev3.png" />
+    <None Include="Resources\prev1.png" />
+    <None Include="Resources\prev2.png" />
+    <None Include="Resources\next3.png" />
+    <None Include="Resources\next1.png" />
+    <None Include="Resources\next2.png" />
+    <None Include="Resources\voicestop.png" />
+    <None Include="Resources\voice1.png" />
+    <None Include="Resources\voice2.png" />
+    <None Include="Resources\voice3.png" />
+    <None Include="Resources\voice4.png" />
+    <None Include="Resources\ssmall.png" />
+    <None Include="Resources\sbig.png" />
+    <None Include="Resources\voicea1.png" />
+    <None Include="Resources\vstop3.png" />
+    <None Include="Resources\voicea2.png" />
+    <None Include="Resources\voicea3.png" />
+    <None Include="Resources\voiceb1.png" />
+    <None Include="Resources\voiceb2.png" />
+    <None Include="Resources\voiceb3.png" />
+    <None Include="Resources\voicec1.png" />
+    <None Include="Resources\voicec2.png" />
+    <None Include="Resources\voicec3.png" />
+    <None Include="Resources\voiced1.png" />
+    <None Include="Resources\voiced2.png" />
+    <None Include="Resources\voiced3.png" />
+    <None Include="Resources\vstop1.png" />
+    <None Include="Resources\vstop2.png" />
+    <None Include="Resources\playerb.png" />
+    <None Include="Resources\clearp.png" />
+    <None Include="Resources\clearh.png" />
+    <None Include="Resources\clearn.png" />
+    <None Include="Resources\ok.png" />
+    <None Include="Resources\floder.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <ResourceCompile Include="Player.rc" />
+  </ItemGroup>
+</Project>

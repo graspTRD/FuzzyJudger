@@ -1,0 +1,22 @@
+QWidget#PicHandle{
+	border-image:url(:/mainframe.png);
+	border-width:25px 2px 50px 2px;
+	margin-left:0px;
+	margin-right:0px;
+	margin-top:0px;
+	margin-bottom:0px;
+}
+QToolButton#openBtn:!hover,QToolButton#renameBtn:!hover{
+	border-image: url(:/clearn.png);
+	border-width:2px 2px 2px 2px;
+}
+
+QToolButton#openBtn:hover,QToolButton#renameBtn:hover{
+	border-image: url(:/clearh.png);
+	border-width:2px 2px 2px 2px;
+}
+
+QToolButton#openBtn:pressed,QToolButton#renameBtn:pressed{
+	border-image: url(:/clearp.png);
+	border-width:2px 2px 2px 2px;
+}

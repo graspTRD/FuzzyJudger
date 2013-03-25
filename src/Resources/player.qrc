@@ -1,0 +1,11 @@
+<RCC>
+    <qresource prefix="/">
+      <file>skin.qss</file>
+      <file>mainframe.png</file>
+      <file>clearn.png</file>
+      <file>clearh.png</file>
+      <file>clearp.png</file>
+      <file>floder.png</file>
+      <file>ok.png</file>
+    </qresource>
+</RCC>
