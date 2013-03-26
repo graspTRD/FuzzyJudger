@@ -11,7 +11,7 @@ Thumbnails::Thumbnails(QWidget *parent)	: QWidget(parent)
 	blurjudger = NULL;
 	
 	imgView = new QScrollArea(this);
-	imgLayout = new QVBoxLayout(this);
+	imgLayout = new QVBoxLayout();
 	blurjudger = new BlurJudger();
 }
 
@@ -52,24 +52,24 @@ void Thumbnails::oncreateThumbnails( const QFileInfoList& imgList )
 	QVector<QHBoxLayout*> hLayoutList;
 
 	QFileInfoList  FileList;
-	foreach(QFileInfo info, imgList)
-	{
-		bool flags = false;
-		QString filename = 	QDir::toNativeSeparators(info.filePath());
-		int m = blurjudger->Judge(filename, &flags);
-		if(m != 0) {
-			qDebug()<<"解析文件出错"<<filename;
-			continue;
-		}
-		if(flags == false) 
-		{
-			FileList.push_back(info);
-		}
-	}
-
+// 	foreach(QFileInfo info, imgList)
+// 	{
+// 		bool flags = false;
+// 		QString filename = 	QDir::toNativeSeparators(info.filePath());
+// 		int m = blurjudger->Judge(filename, &flags);
+// 		if(m != 0) {
+// 			qDebug()<<"解析文件出错"<<filename;
+// 			continue;
+// 		}
+// 		if(flags == false) 
+// 		{
+// 			FileList.push_back(info);
+// 		}
+// 	}
+	FileList = imgList;
 	for(int i = 0; i < FileList.length(); i++)
 	{
-		QHBoxLayout* hBox = new QHBoxLayout(w);
+		QHBoxLayout* hBox = new QHBoxLayout();
 		hBox->setSpacing(3);
 		hBox->setContentsMargins(0,0,0,0);
 		hBox->setAlignment(Qt::AlignLeft|Qt::AlignTop);
@@ -84,6 +84,7 @@ void Thumbnails::oncreateThumbnails( const QFileInfoList& imgList )
 		if (i%3 == 0)
 		{
 			hlayout = hLayoutList.at(i);
+			qDebug()<<i;
 		}
 
 		QLabel* lab = new QLabel(w);
@@ -93,8 +94,11 @@ void Thumbnails::oncreateThumbnails( const QFileInfoList& imgList )
 		lab->setProperty("img", info.filePath());
 		lab->installEventFilter(this);
 
-		QPixmap pic(info.filePath());
-		lab->setPixmap(pic.scaled(150,150));
+// 		QPixmap pic(info.filePath());
+// 		lab->setPixmap(pic.scaled(150,150));
+		QPixmap pp;
+		pp.loadFromData(FileUtils::getThumbnail(info.filePath()));
+		lab->setPixmap(pp.scaled(150,150));
 		if(i%3 == 2) imgLayout->addLayout(hlayout);
 
 		i++;

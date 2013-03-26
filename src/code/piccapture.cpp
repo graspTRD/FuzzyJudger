@@ -31,6 +31,27 @@ void PicCapture::resizeEvent( QResizeEvent* e)
 
 void PicCapture::onshowPic( const QString& file )
 {
-	QPixmap pixmap(file);
+	
+	QFile f(file); 
+	if(!f.exists()) return;
+	//f.open();
+	if(!f.open(QIODevice::ReadOnly)) return;
+	QPixmap pixmap;
+	pixmap.loadFromData(f.readAll());
+	int w = pixmap.width();
+	int h = pixmap.height();
+
+	if (w/(float)h >= width()/height())
+	{
+		picLabel->setFixedWidth(width());
+		picLabel->setFixedHeight(width()*h/(float)w);
+		
+	}
+	else
+	{
+		picLabel->setFixedWidth(w*height()/(float)h);
+		picLabel->setFixedHeight(height());
+	}
+	picLabel->setGeometry((width() - picLabel->width())/2, (height() - picLabel->height())/2, picLabel->width(), picLabel->height());
 	picLabel->setPixmap(pixmap.scaled(picLabel->width(), picLabel->height()));
 }

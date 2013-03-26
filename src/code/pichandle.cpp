@@ -47,7 +47,7 @@ void PicHandle::initUI()
 	controllbar->setGeometry(10,10, 450, 150);
 	connect(controllbar, SIGNAL(createThumbnails(const QFileInfoList&)), thumbnails, SLOT(oncreateThumbnails(const QFileInfoList&)));
 
-	thumbnails->setGeometry(470, 10, width() - 470, height() - 20);
+	thumbnails->setGeometry(470, 10, width() - 480, height() - 20);
 	piccapture->setGeometry(10, 160, 450, height() - 170);
 	connect(thumbnails, SIGNAL(showPic(const QString&)), piccapture, SLOT(onshowPic(const QString&)));
 // 	floder = new QLineEdit(this);
