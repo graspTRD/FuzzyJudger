@@ -33,6 +33,12 @@ public:
 
 	static int fileCount(const QString& filePath);
 	static QStringList getFileList(const QString& dir);
+
+	static QString getImageDateInfo(const QString& imgName);
+	static QString getFileDate(const QString &fileName);
+	static QByteArray getThumbnail(const QString &fileName);  // Àı¬‘Õº
+	static QVariant readImage(const QString &fileName,const int &length,const int &quality = -1);
+	static void renameimgFile( const QString& fileName, const QString& newName );
 private:
 	static void delDir(QFileInfo fileList);
 	static void delDir(QFileInfo rmFile, const QString& exceptDir);

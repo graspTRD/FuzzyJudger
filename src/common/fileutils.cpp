@@ -4,6 +4,7 @@
 #include <string>
 #include <QFileInfo>
 #include <QFileInfoList>
+#include "jhead/jpghead.h"
 #pragma comment (lib, "Version.lib")
 
 FileUtils::FileUtils()
@@ -306,3 +307,161 @@ bool FileUtils::createFile( const QString& fileName, int initSize /*= 0*/, bool 
 	return bSuc;
 }
 
+//*******************************************************************************/
+
+QString FileUtils::getFileDate(const QString &fileName)
+{
+	QFileInfo *info = new QFileInfo(fileName);
+	QString date = info->created().toString(Qt::LocalDate);//.toString("yyyy-MM-dd");DateFormat::
+	delete(info);
+	return date;
+}
+
+QString FileUtils::getImageDateInfo( const QString& imgName )
+{
+	QString dateString = "";
+	if (imgName.endsWith(".jpg", Qt::CaseInsensitive))
+	{
+		JpgHead jh;
+		jh.processFile(imgName);
+		QVariantMap imageInfo = jh.getExif();
+		qDebug()<<imageInfo;
+		if (!imageInfo.isEmpty())
+		{
+			dateString = imageInfo.value("DateTime").toString();
+			return dateString;
+		}
+	}
+	dateString = getFileDate(imgName);
+	return dateString;
+}
+
+QByteArray FileUtils::getThumbnail(const QString &fileName)
+{
+	//读取jpg格式的缩略图
+	QByteArray data;
+	if (fileName.endsWith(".jpg",Qt::CaseInsensitive))
+	{
+		JpgHead jh;
+		jh.processFile(fileName);
+		data = jh.getThumbnail();
+		if (data.size() > 0) return data;
+	}
+	return readImage(fileName,163).toByteArray();
+}
+
+QVariant FileUtils::readImage(const QString &fileName,const int &length,const int &quality)
+{
+	QByteArray data;
+	QImageReader image_reader(fileName);
+	int image_width = image_reader.size().width();
+	int image_height = image_reader.size().height();
+	int w;
+	int h;
+
+	if (length != 0)
+	{
+		if (image_width > image_height) {
+			if (image_width < length) w = image_width;
+			else w = length;
+			image_height = static_cast<double>(w) / image_width * image_height;
+			image_width = w;
+		} else if (image_width < image_height) {
+			if(image_height < length) h = image_height;
+			else h = length;
+			image_width = static_cast<double>(h) / image_height * image_width;
+			image_height = h;
+		} else {
+			if(image_width > length)
+			{
+				image_width = length;
+				image_height = length;
+			}
+		}
+	}
+	if (image_width == 0 )
+	{
+		image_width = image_reader.size().width();
+	}
+	if (image_height == 0 )
+	{
+		image_height = image_reader.size().height();
+	}
+	image_reader.setScaledSize(QSize(image_width, image_height));
+	QImage image = image_reader.read();
+	QBuffer buffer(&data);
+	buffer.open(QIODevice::WriteOnly);
+	if (fileName.endsWith(".png",Qt::CaseInsensitive)) image.save(&buffer, "png",quality);
+	else image.save(&buffer, "jpeg",quality);
+
+	//QImageReader无法获取图片信息时，用QFile获取
+	if (!data.size())
+	{
+		QString url = "";// = getFullPath(fileName);
+
+		if(QDir::isAbsolutePath(fileName)) url = fileName;	
+		else{
+			QString exeFileName = QApplication::applicationFilePath();
+			QFileInfo file(exeFileName);
+			url = file.canonicalPath(); // 去掉..后的，如E:/trd/product/Rokh/bin/
+			url += "/" + fileName;	
+		}
+
+
+		QFile file(url);
+		if (!file.open(QIODevice::ReadOnly))
+		{
+			return QVariant();
+		}
+		QByteArray arraydata = file.readAll();
+		file.close();
+
+		image.loadFromData(arraydata);
+		image_reader.read(&image);
+		image_width = image.size().width();
+		image_height = image.size().height();
+		if (length != 0)
+		{
+			if (image_width > image_height) {
+				if (image_width < length) w = image_width;
+				else w = length;
+				image_height = static_cast<double>(w) / image_width * image_height;
+				image_width = w;
+			} else if (image_width < image_height) {
+				if(image_height < length) h = image_height;
+				else h = length;
+				image_width = static_cast<double>(length) / image_height * image_width;
+				image_height = h;
+			} else {
+				if(image_width > length)
+				{
+					image_width = length;
+					image_height = length;
+				}
+			}
+		}
+		if (image_width == 0 )
+		{
+			image_width = image.size().width();
+		}
+		if (image_height == 0 )
+		{
+			image_height = image.size().height();
+		}
+		image = image.scaled(QSize(image_width, image_height));
+		if (fileName.endsWith(".png",Qt::CaseInsensitive)) image.save(&buffer, "png",quality);
+		else image.save(&buffer, "jpeg",quality);
+	}
+	buffer.close();
+	return data;
+}
+
+void FileUtils::renameimgFile( const QString& fileName, const QString& newName )
+{
+	QFileInfo fileinfo(fileName);
+	QFile file(fileName);
+	QString uu = fileName.left(fileName.length() - fileinfo.fileName().length());
+	if (!file.exists()) return;
+	QString tt= fileName.left(fileName.length() - fileinfo.fileName().length()) + "/" + newName;
+	bool h = file.rename(fileName.left(fileName.length() - fileinfo.fileName().length()) + "/" + newName);
+}

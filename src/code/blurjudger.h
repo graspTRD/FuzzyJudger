@@ -48,7 +48,7 @@ public:
 	BlurJudger();
 	~BlurJudger();
 
-	int Judge(const QString imageName, bool* ret, ImageDefinition* outDef);
+	int Judge(const QString imageName, bool* ret, ImageDefinition* outDef = NULL);
 
 	void SetMax1Threshold(float m1);
 	void SetMax3Threshold(float m2);
