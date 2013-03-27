@@ -6,6 +6,8 @@
 #include <QScrollArea>
 #include <QVBoxLayout>
 #include <QFileInfoList>
+#include <QList>
+#include <QCheckBox>
 #include "blurjudger.h"
 
 class Thumbnails : public QWidget
@@ -23,10 +25,13 @@ signals:
 	void showPic(const QString&);
 public slots:
 	void oncreateThumbnails(const QFileInfoList& FileList);
+	void ondealPic();
 private:
 	QScrollArea* imgView;
 	QVBoxLayout* imgLayout; 
 	BlurJudger* blurjudger;
+	QWidget* w;
+	QList<QCheckBox*> imglist;
 };
 
 #endif // THUMBNAILS_H
