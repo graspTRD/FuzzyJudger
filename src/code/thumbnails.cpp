@@ -68,21 +68,24 @@ void Thumbnails::oncreateThumbnails( const QFileInfoList& imgList )
 	QVector<QHBoxLayout*> hLayoutList;
 
 	QFileInfoList  FileList;
-// 	foreach(QFileInfo info, imgList)
-// 	{
-// 		bool flags = false;
-// 		QString filename = 	QDir::toNativeSeparators(info.filePath());
-// 		int m = blurjudger->Judge(filename, &flags);
-// 		if(m != 0) {
-// 			qDebug()<<"解析文件出错"<<filename;
-// 			continue;
-// 		}
-// 		if(flags == false) 
-// 		{
-// 			FileList.push_back(info);
-// 		}
-// 	}
-	FileList = imgList;
+	foreach(QFileInfo info, imgList)
+	{
+		bool flags = false;
+		QString filename = 	QDir::toNativeSeparators(info.filePath());
+		BEGIN_EXEC
+		int m = blurjudger->Judge(filename, &flags);
+		qDebug()<<"解析文件: "<<filename;
+		END_EXEC
+		if(m != 0) {
+			qDebug()<<"解析文件出错"<<filename;
+			continue;
+		}
+		if(flags == false) 
+		{
+			FileList.push_back(info);
+		}
+	}
+	//FileList = imgList;
 	int k = 0;
 	k = FileList.length()%3==0 ? FileList.length()/3:FileList.length()/3 + 1;
 	for(int i = 0; i < k; i++)
@@ -141,61 +144,28 @@ bool Thumbnails::eventFilter( QObject * o, QEvent * e )
 
 void Thumbnails::ondealPic()
 {
-
-	SHFILEOPSTRUCT FileOp={0}; 
-	FileOp.fFlags = FOF_ALLOWUNDO |   //允许放回回收站
-		FOF_NOCONFIRMATION; //不出现确认对话框
-	FileOp.pFrom = L"G:\\Users\\shenghai\\Desktop\\bbbcc";//(LPCWSTR)ss.toStdString().c_str(); 
-	FileOp.pTo = NULL;      //一定要是NULL
-	FileOp.wFunc = FO_DELETE;    //删除操作
-	bool nOk = SHFileOperation(&FileOp);
-	if(nOk)
-		qDebug()<<"删除失败";
-	else
-		qDebug()<<"删除成功";
-	/*
 	foreach(QCheckBox* box, imglist)
 	{
 		QString ss = box->property("imgname").toString();
+		ss = ss.replace("/", "\\");
+		//ss += "\r\n";
 
 		SHFILEOPSTRUCT FileOp={0}; 
-		FileOp.fFlags = FOF_ALLOWUNDO |   //允许放回回收站
-			FOF_NOCONFIRMATION; //不出现确认对话框
-		FileOp.pFrom = L"G:\\Users\\shenghai\\Desktop\\bbbcc\0";//(LPCWSTR)ss.toStdString().c_str(); 
+		FileOp.fFlags = FOF_ALLOWUNDO | FOF_NOCONFIRMATION; //放入回收站&&不出现确认对话框
+		std::wstring rt = ss.toStdWString();
+		FileOp.pFrom = rt.c_str();
+		//FileOp.pFrom = L"G:\\Users\\shenghai\\Desktop\\bbbcc\\ 37.jpg\0";
 		FileOp.pTo = NULL;      //一定要是NULL
 		FileOp.wFunc = FO_DELETE;    //删除操作
-		//return SHFileOperation(&FileOp) == 0; 
-
-
-
-		//char strSrc[]= ss.toStdString().c_str();//"d:\\Vb\0";//源文件路径;
-// 		char strDst[]="d:\\Vb1\0";//目标文件路径;
-// 
-// 		SHFILEOPSTRUCT FileOp;//定义SHFILEOPSTRUCT结构对象;
-// 		//FileOp.hwnd=this->m_hWnd;
-// 		FileOp.wFunc=FO_DELETE; //执行文件删除操作;
-// 		FileOp.pFrom = (LPCWSTR)ss.toStdString().c_str();
-// 		FileOp.pTo = NULL;//(LPCWSTR)ss.toStdString().c_str();
-// 		FileOp.fFlags=FOF_ALLOWUNDO;//此标志使删除文件备份到Windows回收站
-// 		FileOp.hNameMappings=NULL;
-// 		//FileOp.lpszProgressTitle=strTitle;
-// 		//这里开始删除文件
-		bool nOk = SHFileOperation(&FileOp);
+ 		//这里开始删除文件
+		bool nOk = ::SHFileOperation(&FileOp);
+		DWORD d = ::GetLastError();
 		if(nOk)
 			qDebug()<<"删除失败";
 		else
 			qDebug()<<"删除成功";
 	}
-	*/
-			 /*foreach(QCheckBox* box, imglist)
-	{
-		if (box->isChecked())
-		{
-			//QFile::remove(box->property("imgname").toString(),);
-			
-			//	qDebug()<<box->property("imgname").toString();
-		}
-	}*/
+
 }
 
 
