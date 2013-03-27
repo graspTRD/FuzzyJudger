@@ -22,11 +22,13 @@ protected:
 	void paintEvent(QPaintEvent* e);
 signals:
 	void createThumbnails(const QFileInfoList& FileList);
+	void dealPic();
 private slots:
 	void onselectBtnClicked();
 	void onrenameBtnClicked();
 	void onvalueChanged( int value );
 	void onrefindBtnClicked();
+	void ondealBtnClicked();
 private:
 	QLineEdit* floder;
 	QToolButton* selectBtn;
@@ -35,6 +37,7 @@ private:
 	QLabel* progressText;
 	QSlider* criticalpointSlider;  // 选取临界点
 	QToolButton* refindBtn; // 选择模糊照片
+	QToolButton* dealBtn;
 };
 
 #endif // CONTROLLBAR_H

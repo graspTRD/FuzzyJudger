@@ -50,6 +50,7 @@ void PicHandle::initUI()
 	thumbnails->setGeometry(470, 10, width() - 480, height() - 20);
 	piccapture->setGeometry(10, 160, 450, height() - 170);
 	connect(thumbnails, SIGNAL(showPic(const QString&)), piccapture, SLOT(onshowPic(const QString&)));
+	connect(controllbar, SIGNAL(dealPic()), thumbnails, SLOT(ondealPic()));
 // 	floder = new QLineEdit(this);
 // 	selectBtn = new QToolButton(this);
 // 	renameBtn = new QToolButton(this);

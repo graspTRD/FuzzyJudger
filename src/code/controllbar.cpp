@@ -16,7 +16,7 @@ ControllBar::ControllBar(QWidget *parent) : QWidget(parent)
 	progressText = NULL;
 	criticalpointSlider = NULL;
 	refindBtn = NULL;
-
+	dealBtn = NULL;
 	floder = new QLineEdit(this);
 	selectBtn = new QToolButton(this);
 	renameBtn = new QToolButton(this);
@@ -24,6 +24,7 @@ ControllBar::ControllBar(QWidget *parent) : QWidget(parent)
 	progressText = new QLabel(this);
 	criticalpointSlider = new QSlider(Qt::Horizontal, this);
 	refindBtn = new QToolButton(this);
+	dealBtn = new QToolButton(this);
 
 	floder->setFixedHeight(25);
 	floder->setFixedWidth(360);
@@ -63,13 +64,21 @@ ControllBar::ControllBar(QWidget *parent) : QWidget(parent)
 
 
 	criticalpointSlider->setFixedHeight(20);
-	criticalpointSlider->setFixedWidth(360);
+	criticalpointSlider->setFixedWidth(260);
 	criticalpointSlider->setGeometry(10, 110, criticalpointSlider->width(), criticalpointSlider->height());
+
+	dealBtn->setFixedHeight(40);
+	dealBtn->setFixedWidth(60);
+	dealBtn->setGeometry(280, 100, dealBtn->width(), dealBtn->height());
+	
+	connect(dealBtn, SIGNAL(clicked()), SLOT(ondealBtnClicked()));
 
 	refindBtn->setFixedHeight(40);
 	refindBtn->setFixedWidth(60);
 	refindBtn->setGeometry(380, 100, refindBtn->width(), refindBtn->height());
 	connect(refindBtn, SIGNAL(clicked()), SLOT(onrefindBtnClicked()));
+
+
 }
 
 ControllBar::~ControllBar()
@@ -163,4 +172,9 @@ void ControllBar::onrefindBtnClicked()
 
 	QFileInfoList FileList = dir.entryInfoList();
 	emit createThumbnails(FileList);
+}
+
+void ControllBar::ondealBtnClicked()
+{
+	emit dealPic();
 }
