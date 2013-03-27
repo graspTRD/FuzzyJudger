@@ -40,7 +40,7 @@ float BlurJudger::Max3Threshold() const
 int BlurJudger::Judge( const QString imageName , bool* ret, ImageDefinition* outDef)
 {
 	string fullPath = FileUtils::getFullPath(imageName).toStdString();
-	Mat srcImg = imread(fullPath, CV_LOAD_IMAGE_GRAYSCALE);
+	Mat srcImg = resizeImamge(imread(fullPath, CV_LOAD_IMAGE_GRAYSCALE));
 	if(!srcImg.data)
 	{
 		*ret = false;
@@ -211,6 +211,7 @@ vector<Gradient> BlurJudger::calcMaxGradient( Mat srcImg, Mat maskImg)
 			if(vec.size() < 3)
 			{
 				vec.push_back(Gradient(Point(row,col), valueMax, dir));
+				clearNeighbor(maskImg, row, col, 7);
 			}
 			else
 			{
@@ -221,6 +222,7 @@ vector<Gradient> BlurJudger::calcMaxGradient( Mat srcImg, Mat maskImg)
 					if(vec.at(0).value < valueMax)
 					{
 						vec[0] = Gradient(Point(row,col), valueMax, dir);
+						clearNeighbor(maskImg, row, col, 7);
 					}
 			}
 		}
@@ -377,5 +379,50 @@ float BlurJudger::calcMax3( const vector<float> vec )
 	float d2 = vec.at(2) + vec.at(3) + vec.at(4);
 
 	return max(d1, d2);
+}
+
+Mat BlurJudger::resizeImamge( Mat srcImg )
+{
+	int orgW = srcImg.cols;
+	int orgH = srcImg.rows;
+	int cpsW = 1200;
+	int cpsH = 900;
+
+	if(orgW <= cpsW && orgH <= cpsH)
+	{
+		return srcImg;
+	}
+
+	float rotio = min((float)cpsW / orgW, (float)cpsH / orgH);
+	int dstW = ceil(orgW * rotio);
+	int dstH = ceil(orgH * rotio);
+
+	Mat newImg;
+	resize(srcImg, newImg, Size(dstW, dstH));
+	return newImg;
+}
+
+void BlurJudger::clearNeighbor( Mat srcImg ,int row, int col, int nCount )
+{
+	int step = srcImg.step / sizeof(float);
+	int allRow = srcImg.rows ;
+	int allCol = srcImg.cols;
+	int currentRow = row;
+
+	float* pMask = srcImg.ptr<float>(row);
+
+	for(int i = 0; i < nCount && currentRow < allRow; i++, currentRow += i)
+	{
+		pMask += i*step;
+		for(int j = 0; j < nCount; j++)
+		{	
+			int currCol = col + j;
+			float* pData = pMask + currCol;
+			if((j == 0 && i == 0 ) ||
+				currCol >= allCol ) 
+				continue;
+			*pData = 0;
+		}
+	}
 }
 

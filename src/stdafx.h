@@ -29,7 +29,7 @@ using namespace cv;
 #define END_EXEC \
 	clock_t  _iend_time; \
 	_iend_time = clock(); \
-	qDebug()<<__FUNCTION__<<" exec time is: "<<(double)(_iend_time - _istart_time) / CLOCKS_PER_SEC<<" sec!\n"; 
+	qDebug()<<"Ö´ÐÐÊ±¼ä: "<<(double)(_iend_time - _istart_time) / CLOCKS_PER_SEC<<" sec!\n"; 
 
 #else
 
