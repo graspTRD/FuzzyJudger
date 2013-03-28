@@ -1,39 +1,38 @@
 #include "stdafx.h"
-#include "judgeworker.h"
 #include "thumbnails.h"
-
 #include <QStyleOption>
 #include <QPainter>
 #include <QLabel>
 #include <QCheckBox>
+#include <windows.h>
 #include <shellapi.h>
-#include <QThread>
-
+#include<stdio.h>
+#include <string.h>
+#include <iostream>
+#include <stdlib.h>
+#include <ctype.h>
 
 Thumbnails::Thumbnails(QWidget *parent)	: QWidget(parent)
 {
 	imgView = NULL;
-	imgLayout = NULL;
+	//imgLayout = NULL;
 	blurjudger = NULL;
 	blurjudger = new BlurJudger();
 
-
 	imgView = new QScrollArea(this);
-	imgLayout = new QVBoxLayout(imgView);
-	
+	imgView->setObjectName("imgView");
+	QScrollBar* vBar = imgView->verticalScrollBar();//new QScrollBar(scroll);
+	vBar->setObjectName("VScroll");
+	vBar->setFixedWidth(4);
+
+
+	QScrollBar* hBar = imgView->horizontalScrollBar();
+	hBar->hide();
+
 	w = new QWidget(imgView);
-	w->setLayout(imgLayout);
-	imgLayout->setAlignment(Qt::AlignTop);
-	imgView->setWidget(w);
- 	imgView->setContentsMargins(0,0,0,0);
- 	imgLayout->setSpacing(0);
- 	imgLayout->setContentsMargins(0,0,0,0);
- 	imgLayout->setAlignment(Qt::AlignLeft|Qt::AlignTop);
-	imgView->setSizePolicy(QSizePolicy(QSizePolicy::Expanding, QSizePolicy::Expanding));
-	imgView->setWidgetResizable(true);
-
-	imgLayout->setSizeConstraint(QLayout::SetMinAndMaxSize);
-
+	w->setObjectName("w");
+	//imgView->setStyleSheet("QScrollArea#imgView{background-color:red}");
+	w->setStyleSheet("QWidget#w{background-color:gray}");
 }
 
 Thumbnails::~Thumbnails()
@@ -58,46 +57,62 @@ void Thumbnails::paintEvent(QPaintEvent* e)
 void Thumbnails::resizeEvent( QResizeEvent * )
 {
 	imgView->setGeometry(0,0,width(),height());
-	imgView->setObjectName("aa");
-	//imgView->setStyleSheet("QScrollArea#aa{background-color:red}");
+	
+	w->setGeometry(imgView->rect());
 }
+
 
 void Thumbnails::oncreateThumbnails( const QFileInfoList& imgList )
 {
 
 	imglist.clear();
+
+	QVBoxLayout* imgLayout = new QVBoxLayout(imgView);	
+	imgLayout->setSpacing(3);
+	imgLayout->setContentsMargins(3,3,3,3);
+	imgLayout->setAlignment(Qt::AlignLeft|Qt::AlignTop);
+	imgLayout->setSizeConstraint(QLayout::SetMinAndMaxSize);
+
+	imgView->setSizePolicy(QSizePolicy(QSizePolicy::Expanding, QSizePolicy::Expanding));
+	imgView->setWidgetResizable(true);
+	
+	imgView->setWidget(w);
+	w->setLayout(imgLayout);
+
+
+
 	QHBoxLayout* hlayout = NULL;
 	QVector<QHBoxLayout*> hLayoutList;
 
 	QFileInfoList  FileList;
-	foreach(QFileInfo info, imgList)
-	{
-		bool flags = false;
-		QString filename = 	QDir::toNativeSeparators(info.filePath());
-		BEGIN_EXEC
-		int m = blurjudger->Judge(filename, &flags);
-		qDebug()<<"解析文件: "<<filename;
-		END_EXEC
-		if(m != 0) {
-			qDebug()<<"解析文件出错"<<filename;
-			continue;
-		}
-		if(flags == false) 
-		{
-			FileList.push_back(info);
-		}
-	}
-	//FileList = imgList;
+// 	foreach(QFileInfo info, imgList)
+// 	{
+// 		bool flags = false;
+// 		QString filename = 	QDir::toNativeSeparators(info.filePath());
+// 		BEGIN_EXEC
+// 		int m = blurjudger->Judge(filename, &flags);
+// 		qDebug()<<"解析文件: "<<filename;
+// 		END_EXEC
+// 		if(m != 0) {
+// 			qDebug()<<"解析文件出错"<<filename;
+// 			continue;
+// 		}
+// 		if(flags == false) 
+// 		{
+// 			FileList.push_back(info);
+// 		}
+// 	}
+	FileList = imgList;
 	int k = 0;
 	k = FileList.length()%3==0 ? FileList.length()/3:FileList.length()/3 + 1;
 	for(int i = 0; i < k; i++)
 	{
 		QHBoxLayout* hBox = new QHBoxLayout(w);
-		hBox->setSpacing(3);
-		hBox->setContentsMargins(3,0,0,0);
-		//hBox->setAlignment(Qt::AlignLeft|Qt::AlignTop);
-		imgLayout->insertLayout(i,hBox);
-		//imgLayout->addStretch();
+		hBox->setSpacing(5);
+		hBox->setContentsMargins(3,3,3,3);
+		hBox->setAlignment(Qt::AlignLeft|Qt::AlignTop);
+		imgLayout->addLayout(hBox);
+		imgLayout->addStretch();
 		hLayoutList.push_back(hBox);
 	}
 	int i = 0;
@@ -108,7 +123,7 @@ void Thumbnails::oncreateThumbnails( const QFileInfoList& imgList )
 			hlayout = hLayoutList.at(i/3);
 		}
 		QVBoxLayout* vbox = new QVBoxLayout(w);
-		vbox->setAlignment(Qt::AlignCenter);
+		vbox->setAlignment(Qt::AlignHCenter);
 		QCheckBox* checkbox = new QCheckBox(w);
 		checkbox->setProperty("imgname", info.filePath());
 		imglist.insert(0, checkbox);
@@ -125,9 +140,6 @@ void Thumbnails::oncreateThumbnails( const QFileInfoList& imgList )
 		vbox->addWidget(checkbox);
 
 		hlayout->addLayout(vbox);
-
-		if(i%3 == 2) imgLayout->addLayout(hlayout);
-
 		i++;
 	}
 }
@@ -149,19 +161,34 @@ void Thumbnails::ondealPic()
 	foreach(QCheckBox* box, imglist)
 	{
 		QString ss = box->property("imgname").toString();
-		ss = ss.replace("/", "\\");
-		//ss += "\r\n";
-
-		SHFILEOPSTRUCT FileOp={0}; 
+		//QFile::remove(ss);
+		ss = QDir::toNativeSeparators(ss);
+		//ss = ss.replace("\\", "\\\\");
+		//ss.clear();
+		//ss = "G:\\Users\\shenghai\\Desktop\\201301\\IMG_20130109_09452400.jpg";
+		
+		SHFILEOPSTRUCTW FileOp;
+		ZeroMemory(&FileOp, sizeof(SHFILEOPSTRUCTW));
 		FileOp.fFlags = FOF_ALLOWUNDO | FOF_NOCONFIRMATION; //放入回收站&&不出现确认对话框
-		std::wstring rt = ss.toStdWString();
-		FileOp.pFrom = rt.c_str();
-		//FileOp.pFrom = L"G:\\Users\\shenghai\\Desktop\\bbbcc\\ 37.jpg\0";
+
+#ifdef UNICODE
+		std::wstring stemp = ss.toStdWString(); // Temporary buffer is required
+		LPCWSTR result = stemp.c_str();
+#else
+		LPCWSTR result = s.c_str();
+#endif
+
+		//std::wstring rt = s2ws(ss.toStdString());
+
+
+		//LPCWSTR lpwStr= (LPCWSTR)rt.c_str();
+		//ss = "L\"" + ss + "\"";
+		FileOp.pFrom = result;
+		//FileOp.pFrom = _T("G:\\Users\\shenghai\\Desktop\\201301\\IMG_20130109_09452400.jpg");
 		FileOp.pTo = NULL;      //一定要是NULL
 		FileOp.wFunc = FO_DELETE;    //删除操作
  		//这里开始删除文件
-		bool nOk = ::SHFileOperation(&FileOp);
-		DWORD d = ::GetLastError();
+ 		int nOk = SHFileOperationW(&FileOp); // 返回2 系统找不到指定文件
 		if(nOk)
 			qDebug()<<"删除失败";
 		else
@@ -170,33 +197,16 @@ void Thumbnails::ondealPic()
 
 }
 
-void Thumbnails::onJudgePictures( const QDir& dir, int force )
-{
-	QThread* thread = new QThread(this);
-	JudgeWorker* worker = new JudgeWorker(dir, force);
-
-	worker->moveToThread(thread);
-	worker->connect(thread, SIGNAL(started()), SLOT(doJudge()));
-	worker->connect(worker, SIGNAL(finished()), SLOT(deleteLater()));
-	thread->connect(worker, SIGNAL(finished()), SLOT(quit()));
-	thread->connect(thread, SIGNAL(finished()), SLOT(deleteLater()));
-
-	this->connect(worker, SIGNAL(itemFinished(const QString&, bool)), SLOT(slotItemFinished(const QString&, bool)), Qt::QueuedConnection);
-	this->connect(worker, SIGNAL(itemError(const QString&, int)), SLOT(slotItemError(const QString&, int)), Qt::QueuedConnection);
-
-	thread->start();
-
-}
-
-void Thumbnails::slotItemError( const QString& picName, int code )
-{
-	qDebug()<<"文件："<<picName<<"判断错误！"; //;
-	qDebug()<<"Code： "<<code;  //;
-}
-
-void Thumbnails::slotItemFinished( const QString& picName, bool ret )
-{
-	//TODO 追加到视图;
-}
+// std::wstring Thumbnails::s2ws(const std::string& s)
+// {
+// 	int len;
+// 	int slength = (int)s.length() + 1;
+// 	len = MultiByteToWideChar(CP_ACP, 0, s.c_str(), slength, 0, 0); 
+// 	wchar_t* buf = new wchar_t[len];
+// 	MultiByteToWideChar(CP_ACP, 0, s.c_str(), slength, buf, len);
+// 	std::wstring r(buf);
+// 	delete[] buf;
+// 	return r;
+// }
 
 

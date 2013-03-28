@@ -19,6 +19,7 @@ ControllBar::ControllBar(QWidget *parent) : QWidget(parent)
 	dealBtn = NULL;
 	seltips = NULL;
 	renametips = NULL;
+	slidertext = NULL;
 
 	floder = new QLineEdit(this);
 	selectBtn = new QToolButton(this);
@@ -28,9 +29,10 @@ ControllBar::ControllBar(QWidget *parent) : QWidget(parent)
 	criticalpointSlider = new QSlider(Qt::Horizontal, this);
 	refindBtn = new QToolButton(this);
 	dealBtn = new QToolButton(this);
+	slidertext = new QLabel(this);
 
 	floder->setFixedHeight(25);
-	floder->setFixedWidth(360);
+	floder->setFixedWidth(300);
 	floder->setGeometry(10, 10, floder->width(), floder->height());
 	floder->setPlaceholderText("选择/输入文件路径");
 	floder->clearFocus();
@@ -38,7 +40,7 @@ ControllBar::ControllBar(QWidget *parent) : QWidget(parent)
 	selectBtn->setObjectName("openBtn");
 	selectBtn->setFixedHeight(30);
 	selectBtn->setFixedWidth(60);
-	selectBtn->setGeometry(380, 10, selectBtn->width(), selectBtn->height());
+	selectBtn->setGeometry(315, 8, selectBtn->width(), selectBtn->height());
 // 	selectBtn->setIconSize(QSize(28,28));
 // 	selectBtn->setIcon(QIcon(":/floder.png"));
 	connect(selectBtn, SIGNAL(clicked()), SLOT(onselectBtnClicked()));
@@ -52,56 +54,73 @@ ControllBar::ControllBar(QWidget *parent) : QWidget(parent)
 // 	selpic->setPixmap(QPixmap(":/floder.png").scaled(30,30));
 
 	renameBtn->setObjectName("renameBtn");
-	renameBtn->setFixedHeight(35);
-	renameBtn->setFixedWidth(430);
+	renameBtn->setFixedHeight(30);
+	renameBtn->setFixedWidth(60);
 	//renameBtn->setText("改名");
 // 	renameBtn->setIconSize(QSize(30,30));
 // 	renameBtn->setIcon(QIcon(":/ok.png"));
-	renameBtn->setGeometry(8,43, renameBtn->width(), renameBtn->height());
+	renameBtn->setGeometry(385,8, renameBtn->width(), renameBtn->height());
 	connect(renameBtn, SIGNAL(clicked()), SLOT(onrenameBtnClicked()));
 
 	renametips = new QLabel(renameBtn);
-	renametips->setFixedWidth(100);
-	renametips->setFixedHeight(20);
+	renametips->setFixedWidth(renameBtn->width() - 15);
+	renametips->setFixedHeight(renameBtn->height() - 12);
 	renametips->setPixmap(QPixmap(":/rename.png").scaled(renametips->width(),renametips->height()));
 	renametips->setGeometry(renameBtn->width()/2 - renametips->width()/2, renameBtn->height()/2 - renametips->height()/2, seltips->width(), seltips->height());
 	// 	
 	//renameBtn->setVisible(false);
 
-	progress->setFixedHeight(40);
-	progress->setFixedWidth(420);
-	progress->setGeometry(10, 43, progress->width(), progress->height());
-	progress->setVisible(false);
-	connect(progress, SIGNAL(valueChanged(int)), SLOT(onvalueChanged(int)));
-
-	progressText->setFixedHeight(40);
-	progressText->setFixedWidth(60);
-	progressText->setGeometry(405, 43, progressText->width(), progressText->height());
-	progressText->setText("0 %");
-	progressText->setVisible(false);
-
-
+	criticalpointSlider->setProperty("transparentslider", true);
 	criticalpointSlider->setFixedHeight(20);
-	criticalpointSlider->setFixedWidth(260);
-	criticalpointSlider->setGeometry(10, 110, criticalpointSlider->width(), criticalpointSlider->height());
+	criticalpointSlider->setFixedWidth(240);
+	criticalpointSlider->setGeometry(10, 58, criticalpointSlider->width(), criticalpointSlider->height());
+	criticalpointSlider->setRange(0, 100);
+	criticalpointSlider->setValue(0);
+	connect(criticalpointSlider, SIGNAL(valueChanged(int)), SLOT(onslidervalueChanged(int)));
 
-	refindBtn->setFixedHeight(40);
+	slidertext->setFixedHeight(30);
+	slidertext->setFixedWidth(65);
+	slidertext->setGeometry(245, 54, slidertext->width(), slidertext->height());
+	slidertext->setText("强度:" + QString::number(criticalpointSlider->value()) + "%");
+
+	refindBtn->setObjectName("refindBtn");
+	refindBtn->setFixedHeight(30);
 	refindBtn->setFixedWidth(60);
-	refindBtn->setGeometry(280, 100, refindBtn->width(), refindBtn->height());
+	refindBtn->setGeometry(315, 53, refindBtn->width(), refindBtn->height());
 	connect(refindBtn, SIGNAL(clicked()), SLOT(onrefindBtnClicked()));
 	refindLabel = NULL;
 	refindLabel = new QLabel(refindBtn);
-	refindLabel->setText("检索");
+	refindLabel->setFixedWidth(refindBtn->width() - 15);
+	refindLabel->setFixedHeight(refindBtn->height() - 12);
+	refindLabel->setGeometry(refindBtn->width()/2 - refindLabel->width()/2, refindBtn->height()/2 - refindLabel->height()/2, seltips->width(), seltips->height());
+	refindLabel->setPixmap(QPixmap(":/search.png").scaled(refindLabel->width(), refindLabel->height()));
 
-
-	dealBtn->setFixedHeight(40);
+	dealBtn->setObjectName("dealBtn");
+	dealBtn->setFixedHeight(30);
 	dealBtn->setFixedWidth(60);
-	dealBtn->setGeometry(380, 100, dealBtn->width(), dealBtn->height());
+	dealBtn->setGeometry(385, 53, dealBtn->width(), dealBtn->height());
 	connect(dealBtn, SIGNAL(clicked()), SLOT(ondealBtnClicked()));
 
 	dealLabel = NULL;
 	dealLabel = new QLabel(dealBtn);
-	dealLabel->setText("删除");
+	dealLabel->setFixedWidth(dealBtn->width() - 15);
+	dealLabel->setFixedHeight(dealBtn->height() - 12);
+	dealLabel->setGeometry(dealBtn->width()/2 - dealLabel->width()/2, dealBtn->height()/2 - dealLabel->height()/2, seltips->width(), seltips->height());
+	dealLabel->setPixmap(QPixmap(":/delete.png").scaled(dealLabel->width(), dealLabel->height()));
+	//dealLabel->setText("删除");
+
+	progress->setFixedHeight(40);
+	progress->setFixedWidth(420);
+	progress->setGeometry(10, 100, progress->width(), progress->height());
+	progress->setVisible(false);
+	connect(progress, SIGNAL(valueChanged(int)), SLOT(onvalueChanged(int)));
+
+	progressText->setFixedHeight(40);
+	progressText->setFixedWidth(70);
+	progressText->setGeometry(405, 100, progressText->width(), progressText->height());
+	progressText->setText("0 %");
+	progressText->setVisible(false);
+
 }
 
 ControllBar::~ControllBar()
@@ -133,9 +152,11 @@ void ControllBar::onrenameBtnClicked()
 	if(floder->text() == "") return;
 	QDir dir(floder->text());
 	if (!dir.exists()) return;
+	if (!renameBtn->isEnabled()) return;
 
-	renameBtn->setVisible(false);
+	renameBtn->setEnabled(false);
 	progress->setVisible(true);
+	progress->setProperty("IsRename", true);
 	progressText->setVisible(true);
 
 	QStringList filters;
@@ -167,15 +188,36 @@ void ControllBar::onrenameBtnClicked()
 	//showThumbnail();
 }
 
+
+void ControllBar::onslidervalueChanged(int val)
+{
+	slidertext->clear();
+	slidertext->setText("强度:" + QString::number(val)+ "%");
+	qDebug()<<val;
+}
+
+
 void ControllBar::onvalueChanged( int value )
 {
 	if(value == progress->maximum())
 	{
-		progress->setVisible(false);
-		progress->setValue(0);
-		progressText->setVisible(false);
-		progressText->setText("0 %");
-		renameBtn->setVisible(true);
+		if (progress->property("IsRename").toBool() == true)  // 改名
+		{
+			progress->setVisible(false);
+			progress->setValue(0);
+			progressText->setVisible(false);
+			progressText->setText("0 %");
+			renameBtn->setEnabled(true);
+		}
+		else  // 检测模糊
+		{
+			progress->setVisible(false);
+			progress->setValue(0);
+			progressText->setVisible(false);
+			progressText->setText("0 %");
+			refindBtn->setEnabled(true);
+		}
+		
 	}
 }
 
@@ -184,6 +226,8 @@ void ControllBar::onrefindBtnClicked()
 	if(floder->text() == "") return;
 	QDir dir(floder->text());
 	if (!dir.exists()) return;
+
+	progress->setProperty("IsRename", false);
 
 	QStringList filters;
 	filters<<"*.BMP"<<"*.JPG"<<"*.JPEG"<<"*.PNG"<<"*.GIF";
@@ -196,4 +240,5 @@ void ControllBar::onrefindBtnClicked()
 void ControllBar::ondealBtnClicked()
 {
 	emit dealPic();
+
 }

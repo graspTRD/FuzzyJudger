@@ -6,17 +6,17 @@ QWidget#PicHandle{
 	margin-top:0px;
 	margin-bottom:0px;
 }
-QToolButton#openBtn:!hover,QToolButton#renameBtn:!hover{
+QToolButton#openBtn:!hover,QToolButton#renameBtn:!hover,QToolButton#refindBtn:!hover,QToolButton#dealBtn:!hover{
 	border-image: url(:/clearn.png);
 	border-width:2px 2px 2px 2px;
 }
 
-QToolButton#openBtn:hover,QToolButton#renameBtn:hover{
+QToolButton#openBtn:hover,QToolButton#renameBtn:hover,QToolButton#refindBtn:hover,QToolButton#dealBtn:hover{
 	border-image: url(:/clearh.png);
 	border-width:2px 2px 2px 2px;
 }
 
-QToolButton#openBtn:pressed,QToolButton#renameBtn:pressed{
+QToolButton#openBtn:pressed,QToolButton#renameBtn:pressed,QToolButton#refindBtn:pressed,QToolButton#dealBtn:pressed{
 	border-image: url(:/clearp.png);
 	border-width:2px 2px 2px 2px;
 }
@@ -35,3 +35,23 @@ QScrollBar::handle:vertical:hover {
     background-color:qlineargradient(x1: 0, y1: 0, x2: 1, y2: 0,stop: 0 #ffaacc, stop: 1 #ccffdd);
 }
 
+QSlider[transparentslider = "true"]::groove:horizontal { 
+	 border:0px solid rgba(255,255,255,0);
+	 height:2px;
+	 margin:0px 0;
+	 left:12px;
+	 right:12px;
+} 
+QSlider[transparentslider = "true"]::handle:horizontal{
+	 border:0px solid black;
+	 border-image:url(:/tran.png);
+	 margin:-3px -11px;
+	 left:11px;
+	 right:11px;
+}
+QSlider[transparentslider = "true"]::sub-page:horizontal{
+	 background: qlineargradient(x1:0, y1:1, x2:0, y2:0, stop:0 #dda600, stop:1 #dda600);                      
+}
+QSlider[transparentslider = "true"]::add-page:horizontal{
+	 background: qlineargradient(x1:0, y1:1, x2:0, y2:0, stop:0 #193b6a, stop:1 #193b6a);
+}

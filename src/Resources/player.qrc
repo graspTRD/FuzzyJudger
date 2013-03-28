@@ -9,5 +9,9 @@
       <file>ok.png</file>
       <file>selfloder.png</file>
       <file>rename.png</file>
+      <file>search.png</file>
+      <file>delete.png</file>
+      <file>sbig.png</file>
+      <file>tran.png</file>
     </qresource>
 </RCC>

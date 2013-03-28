@@ -29,6 +29,7 @@ private slots:
 	void onvalueChanged( int value );
 	void onrefindBtnClicked();
 	void ondealBtnClicked();
+	void onslidervalueChanged(int);
 private:
 	QLineEdit* floder;
 	QToolButton* selectBtn;
@@ -39,6 +40,7 @@ private:
 	QProgressBar* progress;
 	QLabel* progressText;
 	QSlider* criticalpointSlider;  // 选取临界点
+	QLabel* slidertext;
 	QToolButton* refindBtn; // 选择模糊照片
 	QLabel* refindLabel;
 	QToolButton* dealBtn;

@@ -271,6 +271,7 @@
     <None Include="Resources\continue.png" />
     <None Include="Resources\continue2.png" />
     <None Include="Resources\continue3.png" />
+    <None Include="Resources\delete.png" />
     <None Include="Resources\floder.png" />
     <None Include="Resources\left1.png" />
     <None Include="Resources\left2.png" />
@@ -292,10 +293,13 @@
     <None Include="Resources\prev1.png" />
     <None Include="Resources\prev2.png" />
     <None Include="Resources\prev3.png" />
+    <None Include="Resources\rename.png" />
     <None Include="Resources\right1.png" />
     <None Include="Resources\right2.png" />
     <None Include="Resources\right3.png" />
     <None Include="Resources\sbig.png" />
+    <None Include="Resources\search.png" />
+    <None Include="Resources\selfloder.png" />
     <None Include="Resources\skin.qss" />
     <None Include="Resources\ssmall.png" />
     <None Include="Resources\stop1.png" />
@@ -344,7 +348,7 @@
   </ImportGroup>
   <ProjectExtensions>
     <VisualStudio>
-      <UserProperties UicDir=".\GeneratedFiles" MocDir=".\GeneratedFiles\$(ConfigurationName)" MocOptions="" RccDir=".\GeneratedFiles" lupdateOnBuild="0" lupdateOptions="" lreleaseOptions="" QtVersion_x0020_Win32="qt4.8.2" />
+      <UserProperties UicDir=".\GeneratedFiles" MocDir=".\GeneratedFiles\$(ConfigurationName)" MocOptions="" RccDir=".\GeneratedFiles" lupdateOnBuild="0" lupdateOptions="" lreleaseOptions="" QtVersion_x0020_Win32="4.8.2" />
     </VisualStudio>
   </ProjectExtensions>
 </Project>
