@@ -16,9 +16,11 @@
 
 Thumbnails::Thumbnails(QWidget *parent)	: QWidget(parent)
 {
+	picNum = 0;
 	imgView = NULL;
-	//imgLayout = NULL;
+	imgLayout = NULL;
 	blurjudger = NULL;
+	hlayout = NULL;
 	blurjudger = new BlurJudger();
 
 	imgView = new QScrollArea(this);
@@ -66,10 +68,11 @@ void Thumbnails::resizeEvent( QResizeEvent * )
 
 void Thumbnails::oncreateThumbnails( const QDir& dir )
 {
-	onJudgePictures(dir, 0);
-	/*imglist.clear();
+	
+	picNum = 0;
+	imglist.clear();
 
-	QVBoxLayout* imgLayout = new QVBoxLayout(imgView);	
+	imgLayout = new QVBoxLayout(imgView);	
 	imgLayout->setSpacing(3);
 	imgLayout->setContentsMargins(3,3,3,3);
 	imgLayout->setAlignment(Qt::AlignLeft|Qt::AlignTop);
@@ -81,29 +84,13 @@ void Thumbnails::oncreateThumbnails( const QDir& dir )
 	imgView->setWidget(w);
 	w->setLayout(imgLayout);
 
-
-
+	onJudgePictures(dir, 0);
+	/*
 	QHBoxLayout* hlayout = NULL;
 	QVector<QHBoxLayout*> hLayoutList;
 
 	QFileInfoList  FileList;
-// 	foreach(QFileInfo info, imgList)
-// 	{
-// 		bool flags = false;
-// 		QString filename = 	QDir::toNativeSeparators(info.filePath());
-// 		BEGIN_EXEC
-// 		int m = blurjudger->Judge(filename, &flags);
-// 		qDebug()<<"解析文件: "<<filename;
-// 		END_EXEC
-// 		if(m != 0) {
-// 			qDebug()<<"解析文件出错"<<filename;
-// 			continue;
-// 		}
-// 		if(flags == false) 
-// 		{
-// 			FileList.push_back(info);
-// 		}
-// 	}
+
 	FileList = imgList;
 	int k = 0;
 	k = FileList.length()%3==0 ? FileList.length()/3:FileList.length()/3 + 1;
@@ -144,6 +131,40 @@ void Thumbnails::oncreateThumbnails( const QDir& dir )
 		hlayout->addLayout(vbox);
 		i++;
 	}*/
+}
+
+void Thumbnails::slotItemFinished( const QString& picName, bool ret )
+{
+	//TODO 追加到视图;
+	//static 
+	qDebug()<<picName<< ret;
+	if(ret) return;
+	if(picNum % 3 == 0)
+	{
+		QHBoxLayout* layout = new QHBoxLayout(w);
+		hlayout = layout;
+	}
+
+	QVBoxLayout* vbox = new QVBoxLayout(w);
+	vbox->setAlignment(Qt::AlignHCenter);
+	QCheckBox* checkbox = new QCheckBox(w);
+	checkbox->setProperty("imgname", picName);
+	imglist.insert(0, checkbox);
+	QLabel* lab = new QLabel(w);
+	lab->setFixedWidth(imgView->width()/3 - 15);
+	lab->setFixedHeight(imgView->width()/3 - 15);
+	vbox->addWidget(lab);
+	lab->setProperty("img", picName);
+	lab->installEventFilter(this);
+
+	QPixmap pp;
+	pp.loadFromData(FileUtils::getThumbnail(picName));
+	lab->setPixmap(pp.scaled(imgView->width()/3 - 15,imgView->width()/3 - 15));
+	vbox->addWidget(checkbox);
+
+	hlayout->addLayout(vbox);
+	if(picNum % 3 == 2 ) imgLayout->addLayout(hlayout);
+	picNum++;
 }
 
 bool Thumbnails::eventFilter( QObject * o, QEvent * e )
@@ -235,12 +256,6 @@ void Thumbnails::slotItemError( const QString& picName, int code )
 	qDebug()<<"Code： "<<code;  //;
 }
 
-void Thumbnails::slotItemFinished( const QString& picName, bool ret )
-{
-	//TODO 追加到视图;
-	//static 
-	qDebug()<<picName;
-}
 
 
 
