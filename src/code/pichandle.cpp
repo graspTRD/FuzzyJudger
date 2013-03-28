@@ -45,7 +45,7 @@ void PicHandle::initUI()
 	//imgcon = NULL;
 
 	controllbar->setGeometry(10,10, 450, 150);
-	connect(controllbar, SIGNAL(createThumbnails(const QFileInfoList&)), thumbnails, SLOT(oncreateThumbnails(const QFileInfoList&)));
+	connect(controllbar, SIGNAL(createThumbnails(const QDir&)), thumbnails, SLOT(oncreateThumbnails(const QDir&)));
 
 	thumbnails->setGeometry(470, 10, width() - 480, height() - 20);
 	piccapture->setGeometry(10, 160, 450, height() - 170);

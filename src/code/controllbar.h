@@ -21,7 +21,7 @@ public:
 protected:
 	void paintEvent(QPaintEvent* e);
 signals:
-	void createThumbnails(const QFileInfoList& FileList);
+	void createThumbnails(const QDir& dir);
 	void dealPic();
 private slots:
 	void onselectBtnClicked();

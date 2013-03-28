@@ -227,14 +227,14 @@ void ControllBar::onrefindBtnClicked()
 	QDir dir(floder->text());
 	if (!dir.exists()) return;
 
-	progress->setProperty("IsRename", false);
-
-	QStringList filters;
-	filters<<"*.BMP"<<"*.JPG"<<"*.JPEG"<<"*.PNG"<<"*.GIF";
-	dir.setNameFilters(filters);
-
-	QFileInfoList FileList = dir.entryInfoList();
-	emit createThumbnails(FileList);
+// 	progress->setProperty("IsRename", false);
+// 
+// 	QStringList filters;
+// 	filters<<"*.BMP"<<"*.JPG"<<"*.JPEG"<<"*.PNG"<<"*.GIF";
+// 	dir.setNameFilters(filters);
+// 
+// 	QFileInfoList FileList = dir.entryInfoList();
+	emit createThumbnails(dir);
 }
 
 void ControllBar::ondealBtnClicked()

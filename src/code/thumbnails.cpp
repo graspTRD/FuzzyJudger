@@ -1,5 +1,6 @@
 #include "stdafx.h"
 #include "thumbnails.h"
+#include "judgeworker.h"
 #include <QStyleOption>
 #include <QPainter>
 #include <QLabel>
@@ -11,6 +12,7 @@
 #include <iostream>
 #include <stdlib.h>
 #include <ctype.h>
+#include <QThread>
 
 Thumbnails::Thumbnails(QWidget *parent)	: QWidget(parent)
 {
@@ -62,10 +64,10 @@ void Thumbnails::resizeEvent( QResizeEvent * )
 }
 
 
-void Thumbnails::oncreateThumbnails( const QFileInfoList& imgList )
+void Thumbnails::oncreateThumbnails( const QDir& dir )
 {
-
-	imglist.clear();
+	onJudgePictures(dir, 0);
+	/*imglist.clear();
 
 	QVBoxLayout* imgLayout = new QVBoxLayout(imgView);	
 	imgLayout->setSpacing(3);
@@ -141,7 +143,7 @@ void Thumbnails::oncreateThumbnails( const QFileInfoList& imgList )
 
 		hlayout->addLayout(vbox);
 		i++;
-	}
+	}*/
 }
 
 bool Thumbnails::eventFilter( QObject * o, QEvent * e )
@@ -208,5 +210,37 @@ void Thumbnails::ondealPic()
 // 	delete[] buf;
 // 	return r;
 // }
+
+void Thumbnails::onJudgePictures( const QDir& dir, int force )
+{
+	QThread* thread = new QThread(this);
+	JudgeWorker* worker = new JudgeWorker(dir, force);
+
+	worker->moveToThread(thread);
+	worker->connect(thread, SIGNAL(started()), SLOT(doJudge()));
+	worker->connect(worker, SIGNAL(finished()), SLOT(deleteLater()));
+	thread->connect(worker, SIGNAL(finished()), SLOT(quit()));
+	thread->connect(thread, SIGNAL(finished()), SLOT(deleteLater()));
+
+	this->connect(worker, SIGNAL(itemFinished(const QString&, bool)), SLOT(slotItemFinished(const QString&, bool)), Qt::QueuedConnection);
+	this->connect(worker, SIGNAL(itemError(const QString&, int)), SLOT(slotItemError(const QString&, int)), Qt::QueuedConnection);
+
+	thread->start();
+
+}
+
+void Thumbnails::slotItemError( const QString& picName, int code )
+{
+	qDebug()<<"文件："<<picName<<"判断错误！"; //;
+	qDebug()<<"Code： "<<code;  //;
+}
+
+void Thumbnails::slotItemFinished( const QString& picName, bool ret )
+{
+	//TODO 追加到视图;
+	//static 
+	qDebug()<<picName;
+}
+
 
 
