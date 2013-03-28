@@ -15,9 +15,10 @@ void JudgeWorker::doJudge()
 	m_dir.setNameFilters(filters);
 	
 	BlurJudger judger(m_force);
-	QStringList picList = m_dir.entryList();
-	foreach(QString picName,  picList)
+	QFileInfoList picList = m_dir.entryInfoList();
+	foreach(QFileInfo picNameInfo,  picList)
 	{
+		QString picName = picNameInfo.filePath();
 		bool flag(true);
 		int ret = judger.Judge(picName, &flag);
 		if(ret) 
