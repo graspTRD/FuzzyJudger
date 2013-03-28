@@ -32,12 +32,17 @@ private slots:
 private:
 	QLineEdit* floder;
 	QToolButton* selectBtn;
+	QLabel* seltips;
+	
 	QToolButton* renameBtn;
+	QLabel* renametips;
 	QProgressBar* progress;
 	QLabel* progressText;
 	QSlider* criticalpointSlider;  // 选取临界点
 	QToolButton* refindBtn; // 选择模糊照片
+	QLabel* refindLabel;
 	QToolButton* dealBtn;
+	QLabel* dealLabel;
 };
 
 #endif // CONTROLLBAR_H

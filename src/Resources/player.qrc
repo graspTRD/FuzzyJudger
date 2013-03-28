@@ -7,5 +7,7 @@
       <file>clearp.png</file>
       <file>floder.png</file>
       <file>ok.png</file>
+      <file>selfloder.png</file>
+      <file>rename.png</file>
     </qresource>
 </RCC>

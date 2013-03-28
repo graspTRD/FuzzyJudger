@@ -8,6 +8,9 @@ PicCapture::PicCapture(QWidget *parent)	: QWidget(parent)
 {
 	picLabel = NULL;
 	picLabel = new QLabel(this);
+	picLabel->setObjectName("picLabel");
+	setObjectName("PicCapture");
+	setStyleSheet("QWidget#PicCapture{background-color:black}");
 }
 
 PicCapture::~PicCapture()
@@ -40,7 +43,7 @@ void PicCapture::onshowPic( const QString& file )
 	pixmap.loadFromData(f.readAll());
 	int w = pixmap.width();
 	int h = pixmap.height();
-
+	//picLabel->setStyleSheet("QLabel#picLabel{background-color:black}");
 	if (w/(float)h >= width()/height())
 	{
 		picLabel->setFixedWidth(width());

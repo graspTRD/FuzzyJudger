@@ -4,7 +4,6 @@
 #include <QtGui/QApplication>
 #include <QResource>
 #include <QTextCodec>
-
 #include <QString>
 #include <QDir>
 #include <QTranslator>

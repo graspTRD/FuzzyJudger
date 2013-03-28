@@ -36,8 +36,10 @@ private:
 	void onJudgePictures(const QDir& dir, int force);
 
 private:
+	std::wstring s2ws(const std::string& s);
+private:
 	QScrollArea* imgView;
-	QVBoxLayout* imgLayout; 
+	//QVBoxLayout* imgLayout; 
 	BlurJudger* blurjudger;
 	QWidget* w;
 	QList<QCheckBox*> imglist;
