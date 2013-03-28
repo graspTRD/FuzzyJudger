@@ -81,7 +81,7 @@ ControllBar::ControllBar(QWidget *parent) : QWidget(parent)
 	slidertext->setFixedHeight(30);
 	slidertext->setFixedWidth(65);
 	slidertext->setGeometry(245, 54, slidertext->width(), slidertext->height());
-	slidertext->setText("强度:" + QString::number(criticalpointSlider->value()) + "%");
+	slidertext->setText("强度:" + QString::number(criticalpointSlider->value()) );
 
 	refindBtn->setObjectName("refindBtn");
 	refindBtn->setFixedHeight(30);
@@ -192,8 +192,8 @@ void ControllBar::onrenameBtnClicked()
 void ControllBar::onslidervalueChanged(int val)
 {
 	slidertext->clear();
-	slidertext->setText("强度:" + QString::number(val)+ "%");
-	qDebug()<<val;
+	slidertext->setText("强度:" + QString::number(val));
+	emit sliderValueChanged(val);
 }
 
 
@@ -234,11 +234,28 @@ void ControllBar::onrefindBtnClicked()
 // 	dir.setNameFilters(filters);
 // 
 // 	QFileInfoList FileList = dir.entryInfoList();
-	emit createThumbnails(dir);
+	emit createThumbnails(dir, criticalpointSlider->value());
 }
 
 void ControllBar::ondealBtnClicked()
 {
 	emit dealPic();
 
+}
+
+void ControllBar::onsetpiccount( int value)
+{
+	progress->setVisible(true);
+	progressText->setVisible(true);
+	progress->setRange(0, value);
+	progress->setValue(0);
+	progressText->setText("0 %");
+}
+
+void ControllBar::onpicstepchanged( int value )
+{
+	qDebug()<<value;
+	progress->setValue(value);
+	progressText->setText(QString::number((value/(float)progress->value()), 'f', 1) + " %");
+	progressText->clear();
 }

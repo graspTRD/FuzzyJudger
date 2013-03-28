@@ -21,8 +21,12 @@ public:
 protected:
 	void paintEvent(QPaintEvent* e);
 signals:
-	void createThumbnails(const QDir& dir);
+	void createThumbnails(const QDir& dir, int);
 	void dealPic();
+	void sliderValueChanged(int);
+public slots:
+	void onsetpiccount(int);
+	void onpicstepchanged(int);
 private slots:
 	void onselectBtnClicked();
 	void onrenameBtnClicked();
