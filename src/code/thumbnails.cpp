@@ -17,6 +17,7 @@
 Thumbnails::Thumbnails(QWidget *parent)	: QWidget(parent)
 {
 	picNum = 0;
+	testnum = 0;
 	imgView = NULL;
 	imgLayout = NULL;
 	blurjudger = NULL;
@@ -66,11 +67,17 @@ void Thumbnails::resizeEvent( QResizeEvent * )
 }
 
 
-void Thumbnails::oncreateThumbnails( const QDir& dir )
+void Thumbnails::oncreateThumbnails( const QDir& dir , int value)
 {
 	
 	picNum = 0;
 	imglist.clear();
+
+	QStringList filters;
+	filters<<"*.BMP"<<"*.JPG"<<"*.JPEG"<<"*.PNG"<<"*.GIF";
+	const_cast<QDir&>(dir).setNameFilters(filters);
+	QFileInfoList picList = dir.entryInfoList();
+	emit piccount(picList.length());
 
 	imgLayout = new QVBoxLayout(imgView);	
 	imgLayout->setSpacing(3);
@@ -84,7 +91,7 @@ void Thumbnails::oncreateThumbnails( const QDir& dir )
 	imgView->setWidget(w);
 	w->setLayout(imgLayout);
 
-	onJudgePictures(dir, 0);
+	onJudgePictures(dir, value);
 	/*
 	QHBoxLayout* hlayout = NULL;
 	QVector<QHBoxLayout*> hLayoutList;
@@ -136,9 +143,14 @@ void Thumbnails::oncreateThumbnails( const QDir& dir )
 void Thumbnails::slotItemFinished( const QString& picName, bool ret )
 {
 	//TODO 追加到视图;
-	//static 
-	qDebug()<<picName<< ret;
-	if(ret) return;
+	 
+	emit picstepchanged(testnum + 1);
+	testnum ++;
+	//qDebug()<<picName<< ret;
+	if(ret)
+		{
+			return;
+	}
 	if(picNum % 3 == 0)
 	{
 		QHBoxLayout* layout = new QHBoxLayout(w);
@@ -252,8 +264,8 @@ void Thumbnails::onJudgePictures( const QDir& dir, int force )
 
 void Thumbnails::slotItemError( const QString& picName, int code )
 {
-	qDebug()<<"文件："<<picName<<"判断错误！"; //;
-	qDebug()<<"Code： "<<code;  //;
+// 	qDebug()<<"文件："<<picName<<"判断错误！"; //;
+// 	qDebug()<<"Code： "<<code;  //;
 }
 
 

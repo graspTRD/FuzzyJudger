@@ -23,8 +23,10 @@ protected:
 	void resizeEvent(QResizeEvent *);
 signals:
 	void showPic(const QString&);
+	void piccount(int);
+	void picstepchanged(int);
 public slots:
-	void oncreateThumbnails(const QDir& dir);
+	void oncreateThumbnails(const QDir& dir, int);
 	void ondealPic();
 
 private slots:
@@ -41,6 +43,7 @@ private:
 	QWidget* w;
 	QList<QCheckBox*> imglist;
 	int picNum;
+	int testnum;
 	QHBoxLayout* hlayout;
 };
 
