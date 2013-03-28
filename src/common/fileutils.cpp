@@ -1,6 +1,7 @@
 #include "stdafx.h"
 #include "fileutils.h"
 #include "errorutils.h"
+#include "stringutils.h"
 #include <string>
 #include <QFileInfo>
 #include <QFileInfoList>
@@ -273,9 +274,13 @@ bool FileUtils::rmFile(const QString& fileName)
 //************************************************************************
 bool FileUtils::renameFile( const QString& fileName, const QString& newName )
 {
-	QString srcName = getFullPath(fileName);
-	QString destName = getFullPath(newName);
 	if(!FileUtils::exists(fileName)) return false;
+	QString srcName = getFullPath(fileName);
+	if(FileUtils::isAbsolute(newName))
+	{
+	  return QFile::rename(srcName, newName);
+	}
+	QString destName = StringUtils::lastLeft(fileName, '/', true) + newName;
 	return QFile::rename(srcName, destName);
 }
 
