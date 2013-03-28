@@ -4,6 +4,7 @@
 #include <QWidget>
 #include <QPaintEvent>
 #include <QResizeEvent>
+#include <QLabel>
 
 class PicCapture : public QWidget
 {

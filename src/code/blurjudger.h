@@ -60,6 +60,7 @@ private:
 	ImageDefinition calcDefinition(Mat srcImg, Mat maskImg);
 	ImageDefinition calcImageDefinition(Mat srcImg, int* smoothCount, int* allCount);
 
+	void clearNeighbor(Mat srcImg ,int row, int col, int count);
 	float calcMax1(const vector<float> vec);
 	float calcMax3(const vector<float> vec);
 	float calcSum(const vector<float> vec);
@@ -70,10 +71,10 @@ private:
 
 	Mat getEdgeImage(Mat srcImg);
 	Mat getGradientImage(Mat graySrcImg);
-
+	Mat resizeImamge(Mat srcImg);
+	
 	vector<Gradient> calcMaxGradient(Mat srcImg, Mat maskImg);
 	vector<float> getNormalPoints(Mat gradImg, Gradient grad);
-
 	vector<float> collectDegree0Points(Mat gradImg, const Point& pt, int count);
 	vector<float> collectDegree45Points(Mat gradImg, const Point& pt, int count);
 	vector<float> collectDegree90Points(Mat gradImg, const Point& pt, int count);

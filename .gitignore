@@ -5,6 +5,7 @@ GeneratedFiles*/
 *.pdb
 *.opensdf
 *.sdf
+
 *.dll
 bin/BlurJudger.exe
 pic.suo

@@ -1,6 +1,7 @@
 #ifndef JPGHEAD_H
 #define JPGHEAD_H
 #include <QObject>
+#include <QVariantMap>
 #include "jhead.h"
 
 class JpgHead : public QObject
