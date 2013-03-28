@@ -97,7 +97,6 @@ ImageDefinition BlurJudger::calcImageDefinition( Mat srcImg, int* smoothCount = 
 	int endHeight = srcImg.rows - imgRowStep * (rowCount - 1);
 
 	Mat maskImg = getEdgeImage(srcImg);
-	//imshow("sdfs", maskImg);
 	for(int i = 0; i < rowCount; i++)
 	{
 		int height = (i== rowCount - 1) ? endHeight: imgRowStep;
@@ -185,16 +184,17 @@ Mat BlurJudger::getEdgeImage(Mat srcImg)
 
 vector<Gradient> BlurJudger::calcMaxGradient( Mat srcImg, Mat maskImg)
 {
-	DebugAssert(srcImg.channels() == 1);
+	DebugAssert(srcImg.type() == CV_32F);
 	vector<Gradient> vec;
 	float grad0 ,grad45, grad90, grad135;
-	int step = srcImg.step / sizeof(float);
+	int step = srcImg.step[0] / srcImg.step[1];
+
 	//ºöÂÔÁË±ßÔµµÄ3¸öÏñËØ;
 	for(int row = 3; row < maskImg.rows - 3; row++)
 	{
 		float* maskPtr = maskImg.ptr<float>(row);
 		float* colPtr = srcImg.ptr<float>(row);
-
+		
 		for(int col = 3; col < maskImg.cols - 3; col++)
 		{
 			if(maskPtr[col] == 0) continue;
@@ -211,7 +211,7 @@ vector<Gradient> BlurJudger::calcMaxGradient( Mat srcImg, Mat maskImg)
 			if(vec.size() < 3)
 			{
 				vec.push_back(Gradient(Point(row,col), valueMax, dir));
-				clearNeighbor(maskImg, row, col, 7);
+				//clearNeighbor(maskImg, row, col, 7);
 			}
 			else
 			{
@@ -222,7 +222,7 @@ vector<Gradient> BlurJudger::calcMaxGradient( Mat srcImg, Mat maskImg)
 					if(vec.at(0).value < valueMax)
 					{
 						vec[0] = Gradient(Point(row,col), valueMax, dir);
-						clearNeighbor(maskImg, row, col, 7);
+						//clearNeighbor(maskImg, row, col, 7);
 					}
 			}
 		}
@@ -282,7 +282,8 @@ vector<float> BlurJudger::collectDegree45Points( Mat gradImg, const Point& pt, i
 
 	int i, j;
 	vector<float> grads;
-	int step = gradImg.step / sizeof(float);
+	int step = gradImg.step[0] / gradImg.step[1];
+
 	float* data = gradImg.ptr<float>(pt.x) + pt.y;
 	for(i = -n, j = n; i <= n; i++, j--)
 	{
@@ -303,7 +304,8 @@ vector<float> BlurJudger::collectDegree90Points( Mat gradImg, const Point& pt, i
 
 	vector<float> grads;
 	float* data = gradImg.ptr<float>(pt.x) + pt.y;
-	int step = gradImg.step / sizeof(float);
+	int step = gradImg.step[0] / gradImg.step[1];
+
 	for(int i = -n; i <= n; i++)
 	{
 		grads.push_back(*(data + i*step));
@@ -320,10 +322,12 @@ vector<float> BlurJudger::collectDegree135Points( Mat gradImg, const Point& pt, 
 	DebugAssert(count % 2!=0);
 	DebugAssert(pt.x >= n && pt.x < gradImg.rows - n);
 	DebugAssert(pt.y >= n && pt.y < gradImg.cols - n);
-	
+	DebugAssert(gradImg.type() == CV_32F);
+
 	vector<float> grads;
 	float* data = gradImg.ptr<float>(pt.x) + pt.y;
-	int step = gradImg.step / sizeof(float);
+	
+	int step = gradImg.step[0] / gradImg.step[1];
 
 	for(int i = -n; i <= n; i++)
 	{
@@ -402,25 +406,26 @@ Mat BlurJudger::resizeImamge( Mat srcImg )
 	return newImg;
 }
 
-void BlurJudger::clearNeighbor( Mat srcImg ,int row, int col, int nCount )
+void BlurJudger::clearNeighbor( Mat srcImg, int row, int col, int nCount )
 {
-	int step = srcImg.step / sizeof(float);
-	int allRow = srcImg.rows ;
+	DebugAssert(srcImg.type() == CV_8U);
+	int step = srcImg.step[0] / srcImg.step[1];
+	int allRow = srcImg.rows;
 	int allCol = srcImg.cols;
 	int currentRow = row;
 
-	float* pMask = srcImg.ptr<float>(row);
+	uchar* pMask = srcImg.ptr<uchar>(row);
 
 	for(int i = 0; i < nCount && currentRow < allRow; i++, currentRow += i)
 	{
 		pMask += i*step;
 		for(int j = 0; j < nCount; j++)
 		{	
-			int currCol = col + j;
-			float* pData = pMask + currCol;
+			int currCol = col + j;	
 			if((j == 0 && i == 0 ) ||
 				currCol >= allCol ) 
 				continue;
+			uchar* pData = pMask + currCol;
 			*pData = 0;
 		}
 	}
