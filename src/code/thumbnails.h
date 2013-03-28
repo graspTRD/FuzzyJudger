@@ -13,19 +13,28 @@
 class Thumbnails : public QWidget
 {
 	Q_OBJECT
-
 public:
 	Thumbnails(QWidget *parent = NULL);
 	~Thumbnails();
-protected:
-	void paintEvent(QPaintEvent*);
-	bool eventFilter(QObject*, QEvent*);
-    void resizeEvent(QResizeEvent *);
-signals:
-	void showPic(const QString&);
 public slots:
 	void oncreateThumbnails(const QFileInfoList& FileList);
 	void ondealPic();
+
+signals:
+	void showPic(const QString&);
+
+protected:
+	void paintEvent(QPaintEvent*);
+	bool eventFilter(QObject*, QEvent*);
+	void resizeEvent(QResizeEvent *);
+
+private slots:
+	void slotItemFinished(const QString& picName, bool ret);
+	void slotItemError(const QString& picName, int code);
+
+private: 
+	void onJudgePictures(const QDir& dir, int force);
+
 private:
 	QScrollArea* imgView;
 	QVBoxLayout* imgLayout; 

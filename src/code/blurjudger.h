@@ -46,7 +46,15 @@ class BlurJudger
 {
 public:
 	BlurJudger();
+	BlurJudger(int force);
 	~BlurJudger();
+
+	enum JudgeError
+	{
+		NoError,
+		LoadImageError,
+		NoJudge
+	};
 
 	int Judge(const QString imageName, bool* ret, ImageDefinition* outDef = NULL);
 
@@ -60,7 +68,9 @@ private:
 	ImageDefinition calcDefinition(Mat srcImg, Mat maskImg);
 	ImageDefinition calcImageDefinition(Mat srcImg, int* smoothCount, int* allCount);
 
+	void initParamWithForce(int force);
 	void clearNeighbor(Mat srcImg ,int row, int col, int count);
+
 	float calcMax1(const vector<float> vec);
 	float calcMax3(const vector<float> vec);
 	float calcSum(const vector<float> vec);

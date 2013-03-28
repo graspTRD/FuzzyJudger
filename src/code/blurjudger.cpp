@@ -10,9 +10,21 @@ BlurJudger::BlurJudger()
 
 }
 
+BlurJudger::BlurJudger( int force )
+{
+	initParamWithForce(force);
+}
+
 BlurJudger::~BlurJudger()
 {
 
+}
+
+void BlurJudger::initParamWithForce( int force )
+{
+	m_max1 = 0.35f;
+	m_max3 = 0.75f; 
+	m_threshold = 25;
 }
 
 void BlurJudger::SetMax1Threshold( float m1 )
@@ -44,7 +56,7 @@ int BlurJudger::Judge( const QString imageName , bool* ret, ImageDefinition* out
 	if(!srcImg.data)
 	{
 		*ret = false;
-		return 1;
+		return LoadImageError;
 	}
 
 	int smooth, all;
@@ -52,13 +64,13 @@ int BlurJudger::Judge( const QString imageName , bool* ret, ImageDefinition* out
 
 	if(def.m1 == 0.0f && def.m3 == 0.0f)
 	{
-		*ret = false;
-		return 1;
+		*ret = true;
+		return NoJudge;
 	}
 
 	*ret = (def.m1 >= m_max1 && def.m3 >= m_max3);
 	if(outDef)  *outDef = def;
-	return 0;
+	return NoError;
 }
 
 ImageDefinition BlurJudger::calcDefinition( Mat srcImg, Mat maskImg)
@@ -66,9 +78,7 @@ ImageDefinition BlurJudger::calcDefinition( Mat srcImg, Mat maskImg)
 	float avgMax1(0), avgMax3(0);
 	Mat gradImg = getGradientImage(srcImg);
 
-//	BEGIN_EXEC
 	vector<Gradient> grads = calcMaxGradient(gradImg, maskImg);
-//	END_EXEC
 	if(grads.size() != 0 )
 	{
 		for(int i = 0; i < (int)grads.size(); i++)
@@ -175,11 +185,6 @@ Mat BlurJudger::getEdgeImage(Mat srcImg)
 	GaussianBlur(srcImg, tmpImg, Size(KENEL, KENEL), 0, 0);
 	Canny(tmpImg, edgeImg, m_threshold, m_threshold * 3);
 	return edgeImg;
-// 	Mat element = getStructuringElement( MORPH_CROSS, Size( 3, 3) );
-// 	dilate(edgeImg, tmpImg, element);
-// 	erode( tmpImg, tmpImg, element);
-// 	imshow("Edge Window", edgeImg);
-// 	imshow("erode", tmpImg);
 }
 
 vector<Gradient> BlurJudger::calcMaxGradient( Mat srcImg, Mat maskImg)
@@ -211,7 +216,7 @@ vector<Gradient> BlurJudger::calcMaxGradient( Mat srcImg, Mat maskImg)
 			if(vec.size() < 3)
 			{
 				vec.push_back(Gradient(Point(row,col), valueMax, dir));
-				//clearNeighbor(maskImg, row, col, 7);
+				clearNeighbor(maskImg, row, col, 7);
 			}
 			else
 			{
@@ -222,7 +227,7 @@ vector<Gradient> BlurJudger::calcMaxGradient( Mat srcImg, Mat maskImg)
 					if(vec.at(0).value < valueMax)
 					{
 						vec[0] = Gradient(Point(row,col), valueMax, dir);
-						//clearNeighbor(maskImg, row, col, 7);
+						clearNeighbor(maskImg, row, col, 7);
 					}
 			}
 		}
@@ -430,4 +435,5 @@ void BlurJudger::clearNeighbor( Mat srcImg, int row, int col, int nCount )
 		}
 	}
 }
+
 
