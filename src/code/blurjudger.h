@@ -94,6 +94,7 @@ private:
 	float m_max1;
 	float m_max3;
 	float m_threshold;
+	float m_force;
 };
 
 

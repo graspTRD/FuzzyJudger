@@ -6,9 +6,9 @@
     <ShowAllFiles>true</ShowAllFiles>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
-    <QTDIR>D:\qt\4.8.2</QTDIR>
+    <QTDIR>E:\qt\4.8.2</QTDIR>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">
-    <QTDIR>D:\qt\4.8.2</QTDIR>
+    <QTDIR>E:\qt\4.8.2</QTDIR>
   </PropertyGroup>
 </Project>
