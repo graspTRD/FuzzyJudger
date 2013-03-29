@@ -61,6 +61,7 @@ ControllBar::ControllBar(QWidget *parent) : QWidget(parent)
 // 	renameBtn->setIcon(QIcon(":/ok.png"));
 	renameBtn->setGeometry(385,8, renameBtn->width(), renameBtn->height());
 	connect(renameBtn, SIGNAL(clicked()), SLOT(onrenameBtnClicked()));
+	
 
 	renametips = new QLabel(renameBtn);
 	renametips->setFixedWidth(renameBtn->width() - 15);
@@ -152,7 +153,7 @@ void ControllBar::onrenameBtnClicked()
 	if(floder->text() == "") return;
 	QDir dir(floder->text());
 	if (!dir.exists()) return;
-	if (!renameBtn->isEnabled()) return;
+	//if (!renameBtn->isEnabled()) return;
 
 	renameBtn->setEnabled(false);
 	progress->setVisible(true);
@@ -177,7 +178,7 @@ void ControllBar::onrenameBtnClicked()
 		QString filename = info.filePath();
 		QString newname = FileUtils::getImageDateInfo(filename).replace(":", "-");
 		newname += " " + QString::number(i) + "." + suffix;
-		FileUtils::renameimgFile(filename, newname);
+		FileUtils::renameFile(filename, newname);
 		progress->setValue(i);
 		float c = i/(float)filecount;
 		progressText->setText(QString::number(c, 'f', 2) + " %");
@@ -245,6 +246,10 @@ void ControllBar::ondealBtnClicked()
 
 void ControllBar::onsetpiccount( int value)
 {
+	renameBtn->setEnabled(false);
+	dealBtn->setEnabled(false);
+	refindBtn->setEnabled(false);
+
 	progress->setVisible(true);
 	progressText->setVisible(true);
 	progress->setRange(0, value);
@@ -256,6 +261,13 @@ void ControllBar::onpicstepchanged( int value )
 {
 	qDebug()<<value;
 	progress->setValue(value);
-	progressText->setText(QString::number((value/(float)progress->value()), 'f', 1) + " %");
+	progressText->setText(QString::number(value/(float)progress->value(), 'f', 1) + " %");
 	progressText->clear();
+}
+
+void ControllBar::onpicdealfinished()
+{
+	renameBtn->setEnabled(true);
+	dealBtn->setEnabled(true);
+	refindBtn->setEnabled(true);
 }

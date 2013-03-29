@@ -8,6 +8,7 @@
 #include <QFileInfoList>
 #include <QList>
 #include <QCheckBox>
+#include <QGridLayout>
 #include "blurjudger.h"
 
 class Thumbnails : public QWidget
@@ -25,6 +26,7 @@ signals:
 	void showPic(const QString&);
 	void piccount(int);
 	void picstepchanged(int);
+	void picdealfinished();
 public slots:
 	void oncreateThumbnails(const QDir& dir, int);
 	void ondealPic();
@@ -35,16 +37,16 @@ private slots:
 
 private: 
 	void onJudgePictures(const QDir& dir, int force);
-	std::wstring s2ws(const std::string& s);
+	//std::wstring s2ws(const std::string& s);
 private:
 	QScrollArea* imgView;
-	QVBoxLayout* imgLayout; 
 	BlurJudger* blurjudger;
 	QWidget* w;
 	QList<QCheckBox*> imglist;
 	int picNum;
 	int testnum;
-	QHBoxLayout* hlayout;
+
+	QGridLayout* picsLayout;
 };
 
 #endif // THUMBNAILS_H

@@ -27,6 +27,7 @@ signals:
 public slots:
 	void onsetpiccount(int);
 	void onpicstepchanged(int);
+	void onpicdealfinished();
 private slots:
 	void onselectBtnClicked();
 	void onrenameBtnClicked();
