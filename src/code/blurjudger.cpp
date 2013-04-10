@@ -2,10 +2,10 @@
 #include "BlurJudger.h"
 
 #define KENEL 3
-#define ROISIZE 256
+#define ROISIZE 128
 
 BlurJudger::BlurJudger()
-	:m_max1(0.35f), m_max3(0.75f), m_threshold(25)
+	:m_max1(0.73f), m_max3(0.33f), m_threshold(30), m_force(0.8f)
 {
 
 }
@@ -24,7 +24,11 @@ void BlurJudger::initParamWithForce( int force )
 {
 	m_max1 = 0.35f;
 	m_max3 = 0.75f; 
-	m_threshold = 25;
+	m_threshold = 30;
+
+	
+	//m_force = force / 100.0f;
+	m_force = 0.1;
 }
 
 void BlurJudger::SetMax1Threshold( float m1 )
@@ -67,12 +71,67 @@ int BlurJudger::Judge( const QString imageName , bool* ret, ImageDefinition* out
 		*ret = true;
 		return NoJudge;
 	}
-
-	*ret = (def.m1 >= m_max1 && def.m3 >= m_max3);
+	float unS = (all - smooth);
+	float  test = smooth  / unS;
+	if(test >= 0.2 && test <= 5) 
+	{
+		*ret = true; // Ì«½üËÆÎÞ·¨ÅÐ¶Ï;
+	}else if(test < 0.2)
+	{
+		*ret = false;
+	}else
+	{
+		*ret = true;
+	}
+	//*ret = (def.m1 >= m_max1 && def.m3 >= m_max3);
 	if(outDef)  *outDef = def;
 	return NoError;
 }
 
+// Mat src;
+// int spatialRad=5,colorRad=40,maxPryLevel=2;
+// 
+// void meanshift_seg(int,void *)
+//  {
+// 	 Mat dst(src.size(), src.type());
+//      pyrMeanShiftFiltering(src,dst,spatialRad,colorRad,maxPryLevel);
+//      RNG rng=theRNG();
+// //      Mat mask(dst.rows+2,dst.cols+2,CV_8UC1,Scalar::all(0));
+// //      for(int i=0;i<dst.rows;i++) 
+// //          for(int j=0;j<dst.cols;j++)
+// //              if(mask.at<uchar>(i+1,j+1)==0)
+// //              {
+// //                  Scalar newcolor(rng(256),rng(256),rng(256));
+// //                  floodFill(dst,mask,Point(i,j),newcolor,0,Scalar::all(1),Scalar::all(1));
+// //              }
+//  }
+// 
+// int BlurJudger::Judge( const QString imageName , bool* ret, ImageDefinition* outDef)
+// {
+// 	string fullPath = FileUtils::getFullPath(imageName).toStdString();
+// 	src = resizeImamge(imread(fullPath));
+// 	if(!src.data)
+// 	{
+// 		*ret = false;
+// 		return LoadImageError;
+// 	}
+// 
+// 
+// 	namedWindow("src",WINDOW_AUTOSIZE);
+// 	namedWindow("dst",WINDOW_AUTOSIZE);
+// 
+// 	createTrackbar("spatialRad","dst",&spatialRad,80,meanshift_seg);
+// 	createTrackbar("colorRad","dst",&colorRad,60,meanshift_seg);
+// 	createTrackbar("maxPryLevel","dst",&maxPryLevel,5,meanshift_seg);
+// 
+// 	Mat dst(src.size(), src.type());
+// 	pyrMeanShiftFiltering(src,dst,spatialRad,colorRad,maxPryLevel);
+// 	imshow("dst",dst);
+// 	imshow("src",src);
+// 
+// 	waitKey();
+// 	return 0;
+// }
 ImageDefinition BlurJudger::calcDefinition( Mat srcImg, Mat maskImg)
 {
 	float avgMax1(0), avgMax3(0);
@@ -167,13 +226,11 @@ Mat BlurJudger::getGradientImage( Mat graySrcImg )
 
 	Sobel(graySrcImg, gradX, imgType, 1, 0, KENEL);
 	Sobel(graySrcImg, gradY, imgType, 0, 1, KENEL);
-// 	addWeighted(gradX, 0.5, gradY, 0.5, 0, gradX);
-// 	return gradX;
+//  	addWeighted(gradX, 0.5, gradY, 0.5, 0, gradX);
+//  	return gradX;
 
 	Mat gradImg = Mat::zeros(gradX.size(), imgType);
-	accumulateSquare(gradX, gradImg);
-	accumulateSquare(gradY, gradImg);
-	sqrt(gradImg, gradImg);
+	magnitude(gradX, gradY, gradImg);
 	return gradImg;
 }
 
@@ -182,8 +239,12 @@ Mat BlurJudger::getGradientImage( Mat graySrcImg )
 Mat BlurJudger::getEdgeImage(Mat srcImg)
 {
 	Mat edgeImg, tmpImg;
-	GaussianBlur(srcImg, tmpImg, Size(KENEL, KENEL), 0, 0);
-	Canny(tmpImg, edgeImg, m_threshold, m_threshold * 3);
+	GaussianBlur(srcImg, tmpImg, Size(KENEL , KENEL), 0, 0);
+	Canny(tmpImg, edgeImg, m_threshold, m_threshold * 5);
+//  	erode(edgeImg, tmpImg, Mat(Size(3, 3), CV_8UC1));
+//  	dilate(tmpImg, edgeImg, Mat(Size(3, 3), CV_8UC1));
+	//imshow("sss", edgeImg);
+	//waitKey(0);
 	return edgeImg;
 }
 
@@ -213,7 +274,7 @@ vector<Gradient> BlurJudger::calcMaxGradient( Mat srcImg, Mat maskImg)
 			float valueMax = max(max(grad0, grad45), max(grad90, grad135));
 			Direction dir = getGradDirection(grad0, grad45, grad90, grad135);
 
-			if(vec.size() < 3)
+			if(vec.size() < 2)
 			{
 				vec.push_back(Gradient(Point(row,col), valueMax, dir));
 				clearNeighbor(maskImg, row, col, 7);
