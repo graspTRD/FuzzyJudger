@@ -56,7 +56,7 @@ public:
 		NoJudge
 	};
 
-	int Judge(const QString imageName, bool* ret, ImageDefinition* outDef = NULL);
+	int Judge(const QString imageName, bool* ret);
 
 	void SetMax1Threshold(float m1);
 	void SetMax3Threshold(float m2);

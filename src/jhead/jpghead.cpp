@@ -60,17 +60,20 @@ QVariantMap JpgHead::getExif()
 {
 	if (!isProcessFile) return QVariantMap();
 	QVariantMap map;
-	map.insert("FileName", ImageInfo.FileName);
-    //map.insert("FileDateTime", ImageInfo.FileDateTime);
-    map.insert("FileSize", ImageInfo.FileSize);
-	map.insert("CameraMake", ImageInfo.CameraMake);
-	map.insert("CameraModel", ImageInfo.CameraModel);
-	map.insert("DateTime", ImageInfo.DateTime);
-	map.insert("Height", ImageInfo.Height);
-	map.insert("Width", ImageInfo.Width);
-	map.insert("Orientation", ImageInfo.Orientation);
-	map.insert("IsColor", ImageInfo.IsColor);
+// 	map.insert("FileName", ImageInfo.FileName);
+//     //map.insert("FileDateTime", ImageInfo.FileDateTime);
+//     map.insert("FileSize", ImageInfo.FileSize);
+// 	map.insert("CameraMake", ImageInfo.CameraMake);
+// 	map.insert("CameraModel", ImageInfo.CameraModel);
+// 	map.insert("DateTime", ImageInfo.DateTime);
+// 	map.insert("Height", ImageInfo.Height);
+// 	map.insert("Width", ImageInfo.Width);
+// 	map.insert("Orientation", ImageInfo.Orientation);
+// 	map.insert("IsColor", ImageInfo.IsColor);
 
+
+	map.insert("FocalLength35mmEquiv",ImageInfo.FocalLength35mmEquiv);
+	map.insert("ExposureTime", ImageInfo.ExposureTime);
 	return map;
 	//struct {
 	//	// Info in the jfif header.

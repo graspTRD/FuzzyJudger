@@ -1,5 +1,6 @@
 #include "stdafx.h"
 #include "BlurJudger.h"
+#include "jhead/jpghead.h"
 
 #define KENEL 3
 #define ROISIZE 128
@@ -22,8 +23,8 @@ BlurJudger::~BlurJudger()
 
 void BlurJudger::initParamWithForce( int force )
 {
-	m_max1 = 0.35f;
-	m_max3 = 0.75f; 
+	m_max1 = 0.30f;
+	m_max3 = 0.70f; 
 	m_threshold = 30;
 
 	
@@ -53,85 +54,134 @@ float BlurJudger::Max3Threshold() const
 	return m_max3;
 }
 
-int BlurJudger::Judge( const QString imageName , bool* ret, ImageDefinition* outDef)
-{
-	string fullPath = FileUtils::getFullPath(imageName).toStdString();
-	Mat srcImg = resizeImamge(imread(fullPath, CV_LOAD_IMAGE_GRAYSCALE));
-	if(!srcImg.data)
-	{
-		*ret = false;
-		return LoadImageError;
-	}
-
-	int smooth, all;
-	ImageDefinition def = calcImageDefinition(srcImg, &smooth, &all);
-
-	if(def.m1 == 0.0f && def.m3 == 0.0f)
-	{
-		*ret = true;
-		return NoJudge;
-	}
-	float unS = (all - smooth);
-	float  test = smooth  / unS;
-	if(test >= 0.2 && test <= 5) 
-	{
-		*ret = true; // 太近似无法判断;
-	}else if(test < 0.2)
-	{
-		*ret = false;
-	}else
-	{
-		*ret = true;
-	}
-	//*ret = (def.m1 >= m_max1 && def.m3 >= m_max3);
-	if(outDef)  *outDef = def;
-	return NoError;
-}
-
-// Mat src;
-// int spatialRad=5,colorRad=40,maxPryLevel=2;
-// 
-// void meanshift_seg(int,void *)
-//  {
-// 	 Mat dst(src.size(), src.type());
-//      pyrMeanShiftFiltering(src,dst,spatialRad,colorRad,maxPryLevel);
-//      RNG rng=theRNG();
-// //      Mat mask(dst.rows+2,dst.cols+2,CV_8UC1,Scalar::all(0));
-// //      for(int i=0;i<dst.rows;i++) 
-// //          for(int j=0;j<dst.cols;j++)
-// //              if(mask.at<uchar>(i+1,j+1)==0)
-// //              {
-// //                  Scalar newcolor(rng(256),rng(256),rng(256));
-// //                  floodFill(dst,mask,Point(i,j),newcolor,0,Scalar::all(1),Scalar::all(1));
-// //              }
-//  }
-// 
-// int BlurJudger::Judge( const QString imageName , bool* ret, ImageDefinition* outDef)
+// int BlurJudger::Judge( const QString imageName , bool* ret)
 // {
-// 	string fullPath = FileUtils::getFullPath(imageName).toStdString();
-// 	src = resizeImamge(imread(fullPath));
-// 	if(!src.data)
+// 	QString fullPath = FileUtils::getFullPath(imageName);
+// 	Mat srcImg = resizeImamge(imread(fullPath.toStdString(), CV_LOAD_IMAGE_GRAYSCALE));
+// 
+// 	if(!srcImg.data)
 // 	{
 // 		*ret = false;
 // 		return LoadImageError;
 // 	}
 // 
+// 	int unSmooth, all;
+// 	ImageDefinition def = calcImageDefinition(srcImg, &unSmooth, &all);
+// 	if(def.m1 == 0.0f && def.m3 == 0.0f)
+// 	{
+// 		*ret = true;
+// 		return NoJudge;
+// 	}
 // 
-// 	namedWindow("src",WINDOW_AUTOSIZE);
-// 	namedWindow("dst",WINDOW_AUTOSIZE);
+// 	float ratio =  unSmooth  / (float)all;
+// 	int smooth = all - unSmooth;
+// // 	int a = 0;
+// // 	if(imageName.toUpper().endsWith("DSCN0528.JPG"))
+// // 	{
+// // 		a = 1;
+// // 	}
+// 	
+// 	//if(a != 1){*ret = true; return 0; };
 // 
-// 	createTrackbar("spatialRad","dst",&spatialRad,80,meanshift_seg);
-// 	createTrackbar("colorRad","dst",&colorRad,60,meanshift_seg);
-// 	createTrackbar("maxPryLevel","dst",&maxPryLevel,5,meanshift_seg);
+// 	JpgHead picHeader;
+// 	picHeader.processFile(fullPath);
+// 	QVariantMap headerInfo = picHeader.getExif();
 // 
-// 	Mat dst(src.size(), src.type());
-// 	pyrMeanShiftFiltering(src,dst,spatialRad,colorRad,maxPryLevel);
-// 	imshow("dst",dst);
-// 	imshow("src",src);
+// 	float expTime = headerInfo.value("ExposureTime", QVariant()).toFloat();
+// 	int forceLength35 = headerInfo.value("FocalLength35mmEquiv", QVariant()).toInt();
 // 
-// 	waitKey();
-// 	return 0;
+// 	float m_expTimeUpper = 1 / 9.0f;
+// 	float m_expTimeLower = 1 / 500.0f;
+// 	int flFactor  = 10;
+// 
+// 	if(expTime != 0.0f)
+// 	{
+// 		if( expTime >= m_expTimeUpper)
+// 		{
+// 			float ss = 1.0f / forceLength35;
+// 			float fl = (forceLength35 == 0) ? 0.0f :  1.0f / forceLength35 * flFactor; 
+// 			if(fl != 0.0f && expTime >= fl)
+// 			{ //模糊的极少就算模糊;
+// 				//*ret = def.m1 > 0.70f && def.m3 > 0.3f  ? true : false;
+// 				*ret = ratio > 0.23f ? false : true;
+// 				return NoError;
+// 			}
+// 			else
+// 			{//少许模糊就算;
+// 				*ret = ratio > 0.40f ? false : true;
+// 				//*ret = def.m1 > 0.73f && def.m3 > 0.33f  ? true : false;
+// 				return NoError;
+// 			}
+// 		}
+// 		else if(expTime <= m_expTimeLower)
+// 		{ // 全局模糊高强度;
+// 			*ret = ratio > 0.69f ? false : true;
+// 			return NoError;
+// 		}
+// 	}
+// 
+// // 	float upForce = min(10, 2 + m_force * m_force * 10.0f);
+// // 	float lowForce = max(0.08, 0.3 - m_force * m_force);
+// 
+// 	float upForce = 0.89f;
+// 	float lowForce = 0.5f;
+// 	//正常检测;
+// 	if(ratio <= upForce) 
+// 	{
+// 		*ret = true; // 太近似无法判断;
+// 	}else if(ratio > upForce)
+// 	{
+// 		*ret = false;
+// 	} 
+// 
+//    return NoError;
 // }
+
+Mat src;
+int spatialRad=10,colorRad=40,maxPryLevel=3;
+
+void meanshift_seg(int,void *)
+ {
+	 Mat dst(src.size(), src.type());
+     pyrMeanShiftFiltering(src,dst,spatialRad,colorRad,maxPryLevel);
+     RNG rng=theRNG();
+//      Mat mask(dst.rows+2,dst.cols+2,CV_8UC1,Scalar::all(0));
+//      for(int i=0;i<dst.rows;i++) 
+//          for(int j=0;j<dst.cols;j++)
+//              if(mask.at<uchar>(i+1,j+1)==0)
+//              {
+//                  Scalar newcolor(rng(256),rng(256),rng(256));
+//                  floodFill(dst,mask,Point(i,j),newcolor,0,Scalar::all(1),Scalar::all(1));
+//              }
+	 imshow("dst",dst);
+ }
+
+int BlurJudger::Judge( const QString imageName , bool* ret)
+{
+	string fullPath = FileUtils::getFullPath(imageName).toStdString();
+	src = resizeImamge(imread(fullPath));
+	if(!src.data)
+	{
+		*ret = false;
+		return LoadImageError;
+	}
+
+
+	namedWindow("src",WINDOW_AUTOSIZE);
+	namedWindow("dst",WINDOW_AUTOSIZE);
+
+	createTrackbar("spatialRad","dst",&spatialRad,80,meanshift_seg);
+	createTrackbar("colorRad","dst",&colorRad,60,meanshift_seg);
+	createTrackbar("maxPryLevel","dst",&maxPryLevel,5,meanshift_seg);
+
+	Mat dst(src.size(), src.type());
+	pyrMeanShiftFiltering(src,dst,spatialRad,colorRad,maxPryLevel);
+	imshow("dst",dst);
+	imshow("src",src);
+
+	waitKey();
+	return 0;
+}
 ImageDefinition BlurJudger::calcDefinition( Mat srcImg, Mat maskImg)
 {
 	float avgMax1(0), avgMax3(0);
@@ -152,9 +202,9 @@ ImageDefinition BlurJudger::calcDefinition( Mat srcImg, Mat maskImg)
 	return std::move(ImageDefinition(0.0f, 0.0f));
 }
 
-ImageDefinition BlurJudger::calcImageDefinition( Mat srcImg, int* smoothCount = NULL, int* allCount = NULL)
+ImageDefinition BlurJudger::calcImageDefinition( Mat srcImg, int* unSmoothCount = NULL, int* allCount = NULL)
 {
-	int smoothCnt(0), allCnt(0);
+	int unSmoothCnt(0), allCnt(0);
 	float avgM1(0), avgM3(0);
 
 	int imgRowStep = min(ROISIZE, srcImg.rows);
@@ -179,7 +229,7 @@ ImageDefinition BlurJudger::calcImageDefinition( Mat srcImg, int* smoothCount = 
 			ImageDefinition imgDef = calcDefinition(roiImg, roiMaskImg);
 			if(imgDef.m1 == 0.0f && imgDef.m3 == 0.0f) continue;
 
-			imgDef.m1 >= m_max1 && imgDef.m3 >= m_max3 ? smoothCnt++ : NULL ;
+			imgDef.m1 >= m_max1 && imgDef.m3 >= m_max3 ?  NULL:  unSmoothCnt++;
 			avgM1 += imgDef.m1;
 			avgM3 += imgDef.m3;
 			allCnt++;
@@ -187,7 +237,7 @@ ImageDefinition BlurJudger::calcImageDefinition( Mat srcImg, int* smoothCount = 
 	}
 
 	if(allCount) *allCount = allCnt;
-	if(smoothCount) *smoothCount = smoothCnt;
+	if(unSmoothCount) *unSmoothCount = unSmoothCnt;
 	if(allCnt == 0) return std::move(ImageDefinition(0.0f, 0.0f));
 
 	return std::move(ImageDefinition(avgM1 / allCnt, avgM3 / allCnt));
@@ -274,7 +324,7 @@ vector<Gradient> BlurJudger::calcMaxGradient( Mat srcImg, Mat maskImg)
 			float valueMax = max(max(grad0, grad45), max(grad90, grad135));
 			Direction dir = getGradDirection(grad0, grad45, grad90, grad135);
 
-			if(vec.size() < 2)
+			if(vec.size() < 3)
 			{
 				vec.push_back(Gradient(Point(row,col), valueMax, dir));
 				clearNeighbor(maskImg, row, col, 7);
