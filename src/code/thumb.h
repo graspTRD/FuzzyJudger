@@ -3,6 +3,9 @@
 
 #include <QWidget>
 #include <QVBoxLayout>
+#include <QCheckBox>
+#include <QLabel>
+
 class Thumb : public QWidget
 {
 	Q_OBJECT

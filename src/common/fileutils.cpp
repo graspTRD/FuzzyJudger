@@ -461,12 +461,3 @@ QVariant FileUtils::readImage(const QString &fileName,const int &length,const in
 	return data;
 }
 
-void FileUtils::renameimgFile( const QString& fileName, const QString& newName )
-{
-	QFileInfo fileinfo(fileName);
-	QFile file(fileName);
-	QString uu = fileName.left(fileName.length() - fileinfo.fileName().length());
-	if (!file.exists()) return;
-	QString tt= fileName.left(fileName.length() - fileinfo.fileName().length()) + "/" + newName;
-	bool h = file.rename(fileName.left(fileName.length() - fileinfo.fileName().length()) + "/" + newName);
-}

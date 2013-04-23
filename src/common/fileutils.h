@@ -38,7 +38,7 @@ public:
 	static QString getFileDate(const QString &fileName);
 	static QByteArray getThumbnail(const QString &fileName);  // Àı¬‘Õº
 	static QVariant readImage(const QString &fileName,const int &length,const int &quality = -1);
-	static void renameimgFile( const QString& fileName, const QString& newName );
+
 private:
 	static void delDir(QFileInfo fileList);
 	static void delDir(QFileInfo rmFile, const QString& exceptDir);

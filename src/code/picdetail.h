@@ -2,6 +2,7 @@
 #define PICDETAIL_H
 
 #include <QWidget>
+#include <QLabel>
 
 class PicDetail : public QWidget
 {

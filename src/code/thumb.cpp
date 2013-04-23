@@ -1,6 +1,6 @@
 #include "stdafx.h"
 #include "thumb.h"
-#include "fileutils.h"
+#include "common/fileutils.h"
 #include <QPixmap>
 
 Thumb::Thumb(QWidget *parent) : QWidget(parent)
@@ -13,8 +13,6 @@ Thumb::Thumb(QWidget *parent) : QWidget(parent)
 	layout->setObjectName("vbox");
 	layout->setAlignment(Qt::AlignLeft | Qt::AlignBottom);
 	layout->setContentsMargins(0,0,0,0);
-	
-	
 }
 
 Thumb::~Thumb()
