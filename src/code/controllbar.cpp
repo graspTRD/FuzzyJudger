@@ -112,13 +112,13 @@ ControllBar::ControllBar(QWidget *parent) : QWidget(parent)
 
 	progress->setFixedHeight(40);
 	progress->setFixedWidth(420);
-	progress->setGeometry(10, 100, progress->width(), progress->height());
+	progress->setGeometry(10, 90, progress->width(), progress->height());
 	progress->setVisible(false);
 	connect(progress, SIGNAL(valueChanged(int)), SLOT(onvalueChanged(int)));
 
 	progressText->setFixedHeight(40);
 	progressText->setFixedWidth(70);
-	progressText->setGeometry(405, 100, progressText->width(), progressText->height());
+	progressText->setGeometry(405, 90, progressText->width(), progressText->height());
 	progressText->setText("0 %");
 	progressText->setVisible(false);
 

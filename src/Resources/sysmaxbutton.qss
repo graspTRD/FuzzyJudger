@@ -1,0 +1,30 @@
+/*******************max************************/
+QPushButton[normalBtn = "false"]:!hover{
+	border-image: url(:/syspanel/maxn.png);
+	border-width:2px 2px 2px 2px;
+}
+
+QPushButton[normalBtn = "false"]:hover{
+	border-image: url(:/syspanel/maxh.png);
+	border-width:2px 2px 2px 2px;
+}
+
+QPushButton[normalBtn = "false"]:pressed{
+	border-image: url(:/syspanel/maxp.png);
+	border-width:2px 2px 2px 2px;
+}
+/*******************normal************************/
+QPushButton[normalBtn = "true"]:!hover{
+	border-image: url(:/syspanel/normaln.png);
+	border-width:2px 2px 2px 2px;
+}
+
+QPushButton[normalBtn = "true"]:hover{
+	border-image: url(:/syspanel/normalh.png);
+	border-width:2px 2px 2px 2px;
+}
+
+QPushButton[normalBtn = "true"]:pressed{
+	border-image: url(:/syspanel/normalp.png);
+	border-width:2px 2px 2px 2px;
+}

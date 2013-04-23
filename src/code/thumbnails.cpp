@@ -1,6 +1,7 @@
 #include "stdafx.h"
 #include "thumbnails.h"
 #include "judgeworker.h"
+
 #include <QStyleOption>
 #include <QPainter>
 #include <QLabel>
@@ -13,15 +14,19 @@
 #include <stdlib.h>
 #include <ctype.h>
 #include <QThread>
+#include <QLayoutItem>
+#include <QList>
 
 Thumbnails::Thumbnails(QWidget *parent)	: QWidget(parent)
 {
 	picNum = 0;
 	testnum = 0;
+	lineNum = 0;
 	imgView = NULL;
 	blurjudger = NULL;
 	picsLayout = NULL;
 	w = NULL;
+	picdetail = NULL;
 	blurjudger = new BlurJudger();
 
 	imgView = new QScrollArea(this);
@@ -60,16 +65,75 @@ void Thumbnails::paintEvent(QPaintEvent* e)
 void Thumbnails::resizeEvent( QResizeEvent * )
 {
 	imgView->setGeometry(0,0,width(),height());
-	
-	
+	if (!w) return;
+	w->setGeometry(rect());
+// 	QList<QLabel*> labels = w->findChildren<QLabel*>("ThumbPic");
+// 	foreach(QLabel* lab, labels)
+// 	{
+// 		lab->setFixedWidth(imgView->width()/3 - 15);
+// 		lab->setFixedHeight(imgView->width()/3 - 15);
+// 		QPixmap pp;
+// 		pp.loadFromData(FileUtils::getThumbnail(lab->property("img").toString()));
+// 		lab->setPixmap(pp.scaled(imgView->width()/3 - 15,imgView->width()/3 - 15));
+// 	}
+
+	relayout();
 }
 
 
+void Thumbnails::relayout()
+{
+	if(width()/PicValue == lineNum) return;
+	if(imglist.length() ==0) return;
+	
+	
+
+	QList<QLayoutItem*> itemlist;
+	int k = imglist.length()%lineNum == 0 ? imglist.length()/lineNum : imglist.length()/lineNum + 1;
+	for (int i = 0; i < k; i++)
+	{
+		for (int j = 0; j < lineNum; j++)
+		{
+			if(picsLayout->itemAtPosition(i, j))
+			{
+				itemlist.push_back(picsLayout->itemAtPosition(i, j));
+				picsLayout->removeItem(picsLayout->itemAtPosition(i, j));
+			}
+
+		}
+	}
+
+	if (picsLayout)
+	{
+		delete picsLayout;
+		picsLayout = NULL;
+	}
+	picsLayout = new QGridLayout(imgView);
+	picsLayout->setSpacing(8);
+	picsLayout->setContentsMargins(5,5,5,5);
+	picsLayout->setAlignment(Qt::AlignLeft|Qt::AlignTop);
+	picsLayout->setSizeConstraint(QLayout::SetMinAndMaxSize);
+	w->setLayout(picsLayout);
+
+ 	int h = imglist.length()%(width()/PicValue) == 0 ? imglist.length()/(width()/PicValue) : imglist.length()/(width()/PicValue) + 1;
+	for (int i = 0; i < h ; i++)
+	{
+		for (int j = 0; j < width()/PicValue; j++)
+		{
+			if(i*(width()/PicValue) + j  < itemlist.length() && itemlist.at(i*(width()/PicValue) + j))
+			{
+				picsLayout->addItem(itemlist.at(i*(width()/PicValue) + j ), i, j);
+			}
+		}
+	}
+	lineNum = width()/PicValue;
+}
+
 void Thumbnails::oncreateThumbnails( const QDir& dir , int value)
 {
-	
 	picNum = 0;
 	testnum = 0;
+	lineNum = width()/PicValue;
 	imglist.clear();
 
 	QStringList filters;
@@ -111,44 +175,72 @@ void Thumbnails::oncreateThumbnails( const QDir& dir , int value)
 
 void Thumbnails::slotItemFinished( const QString& picName, bool ret )
 {
-	//TODO ×·¼Óµ½ÊÓÍ¼;
-	 
 	emit picstepchanged(testnum + 1);
 	testnum ++;
 	if(ret) return;
 
-	QVBoxLayout* vbox = new QVBoxLayout(w);
-	vbox->setAlignment(Qt::AlignHCenter);
-	QCheckBox* checkbox = new QCheckBox(w);
-	checkbox->setProperty("imgname", picName);
-	imglist.insert(0, checkbox);
-	QLabel* lab = new QLabel(w);
-	lab->setFixedWidth(imgView->width()/3 - 15);
-	lab->setFixedHeight(imgView->width()/3 - 15);
-	vbox->addWidget(lab);
-	lab->setProperty("img", picName);
-	lab->installEventFilter(this);
+// 	QVBoxLayout* vbox = new QVBoxLayout(w);
+// 	vbox->setObjectName("vbox");
+// 	vbox->setAlignment(Qt::AlignHCenter);
+// 	QCheckBox* checkbox = new QCheckBox(w);
+// 	checkbox->setProperty("imgname", picName);
+ 	
+// 	QLabel* lab = new QLabel(w);
+// 	lab->setObjectName("ThumbPic");
+// 	lab->setFixedWidth(imgView->width()/3 - 15);
+// 	lab->setFixedHeight(imgView->width()/3 - 15);
+// 	vbox->addWidget(lab);
+// 	lab->setProperty("img", picName);
+// 	lab->installEventFilter(this);
+// 
+// 	QPixmap pp;
+// 	pp.loadFromData(FileUtils::getThumbnail(picName));
+// 	lab->setPixmap(pp.scaled(imgView->width()/3 - 15,imgView->width()/3 - 15));
+// 	vbox->addWidget(checkbox);
 
-	QPixmap pp;
-	pp.loadFromData(FileUtils::getThumbnail(picName));
-	lab->setPixmap(pp.scaled(imgView->width()/3 - 15,imgView->width()/3 - 15));
-	vbox->addWidget(checkbox);
-
-	picsLayout->addLayout(vbox, picNum/3, picNum % 3);
+	Thumb* thumb = new Thumb(this);
+	thumb->setFixedWidth(PicValue);
+	thumb->setFixedHeight(PicValue);
+	thumb->setProperty("img", picName);
+	thumb->installEventFilter(this);
+	thumb->setImg(picName);
+	imglist.insert(0, thumb);
+	picsLayout->addWidget(thumb, picNum/(width()/PicValue), picNum % (width()/PicValue));
 	picNum++;
 }
 
 bool Thumbnails::eventFilter( QObject * o, QEvent * e )
 {
-	if(e->type() == QEvent::MouseButtonPress)
+	if (e->type() == QEvent::MouseButtonDblClick)
+	{
+		if (o->property("img").toString() != "")
+		{
+			picdetail = new PicDetail();
+			picdetail->showPic(o->property("img").toString());
+			connect(picdetail, SIGNAL(exc()), SLOT(onExc()));
+		}
+	}
+	else if(e->type() == QEvent::MouseButtonPress)
 	{
 		if (o->property("img").toString() != "")
 		{
 			emit showPic(o->property("img").toString());
 		}
 	}
+	
 	return false;
 }
+
+void Thumbnails::onExc()
+{
+	if (picdetail)
+	{
+		delete picdetail;
+		picdetail = NULL;
+	}
+}
+
+
 
 void Thumbnails::ondealPic()
 {

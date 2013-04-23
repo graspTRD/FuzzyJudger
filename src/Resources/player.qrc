@@ -1,6 +1,8 @@
 <RCC>
     <qresource prefix="/">
       <file>skin.qss</file>
+      <file>sysmaxbutton.qss</file>
+
       <file>mainframe.png</file>
       <file>clearn.png</file>
       <file>clearh.png</file>
@@ -13,5 +15,23 @@
       <file>delete.png</file>
       <file>sbig.png</file>
       <file>tran.png</file>
+
+      <file>syspanel/closeh.png</file>
+      <file>syspanel/closen.png</file>
+      <file>syspanel/closep.png</file>
+      <file>syspanel/maxh.png</file>
+      <file>syspanel/maxn.png</file>
+      <file>syspanel/maxp.png</file>
+      <file>syspanel/minh.png</file>
+      <file>syspanel/minn.png</file>
+      <file>syspanel/minp.png</file>
+      <file>syspanel/normalh.png</file>
+      <file>syspanel/normaln.png</file>
+      <file>syspanel/normalp.png</file>
+
+      <file>checkbox/checkbox.png</file>
+      <file>checkbox/checkboxHover.png</file>
+      <file>checkbox/checkboxPressed.png</file>
+      <file>checkbox/checkboxPressedHover.png</file>
     </qresource>
 </RCC>

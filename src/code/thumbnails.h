@@ -10,6 +10,8 @@
 #include <QCheckBox>
 #include <QGridLayout>
 #include "blurjudger.h"
+#include "picdetail.h"
+#include "thumb.h"
 
 class Thumbnails : public QWidget
 {
@@ -34,19 +36,22 @@ public slots:
 private slots:
 	void slotItemFinished(const QString& picName, bool ret);
 	void slotItemError(const QString& picName, int code);
-
+	void onExc();
 private: 
 	void onJudgePictures(const QDir& dir, int force);
 	//std::wstring s2ws(const std::string& s);
+	void relayout();
 private:
 	QScrollArea* imgView;
 	BlurJudger* blurjudger;
 	QWidget* w;
-	QList<QCheckBox*> imglist;
+	QList<Thumb*> imglist;
 	int picNum;
 	int testnum;
-
+	int lineNum;
 	QGridLayout* picsLayout;
+	PicDetail* picdetail;
+	static const int PicValue = 160;
 };
 
 #endif // THUMBNAILS_H
