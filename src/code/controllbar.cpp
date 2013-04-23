@@ -176,8 +176,8 @@ void ControllBar::onrenameBtnClicked()
 		i++;
 		QString suffix = info.completeSuffix();
 		QString filename = info.filePath();
-		QString newname = FileUtils::getImageDateInfo(filename).replace(":", "-").replace(" ","-");
-		newname += "-" + QString::number(i) + "." + suffix;
+		QString newname = FileUtils::getImageDateInfo(filename).replace(":", "-");
+		newname += " " + QString::number(i) + "." + suffix;
 		FileUtils::renameFile(filename, newname);
 		progress->setValue(i);
 		float c = i/(float)filecount;
